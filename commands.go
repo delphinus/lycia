@@ -29,12 +29,12 @@ var commandOpen = cli.Command{
 
 func doOpen(c *cli.Context) {
 	argDir := c.Args().Get(0)
-	//ref := c.String("ref")
+	ref := c.String("ref")
 
 	if argDir == "" {
 		argDir = "."
 	}
 
-	url, err := NewURL(argDir)
+	url, err := NewURL(argDir, ref)
 	fmt.Println(url, err)
 }
