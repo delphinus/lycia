@@ -1,10 +1,11 @@
 package url_maker
 
 import (
+	"log"
 	"regexp"
 )
 
-var urlPattern = regexp.MustCompile(`^(?P<scheme>(?:https?|git|ssh)://)(?P<username>[^@]+@)?(?P<host>[^/]+)/(?P<path>.*?)(?:\.git)?`)
+var urlPattern = regexp.MustCompile(`^(?P<scheme>https?|git|ssh)://(?P<username>[^@]+@)?(?P<host>[^/]+)/(?P<path>.*?)(?:\.git)?`)
 
 type MyError string
 
@@ -16,10 +17,10 @@ func (self MyError) Error() (err string) {
 type GitUrl struct {
 	RawUrl   string
 	WebUrl   string
-	scheme   string
-	username string
-	host     string
-	path     string
+	Scheme   string
+	Username string
+	Host     string
+	Path     string
 }
 
 func New(rawUrl string) (self GitUrl, err error) {
@@ -28,19 +29,20 @@ func New(rawUrl string) (self GitUrl, err error) {
 	return
 }
 
-func (self GitUrl) Parse() (err error) {
+func (self *GitUrl) Parse() (err error) {
 	if !urlPattern.MatchString(self.RawUrl) {
 		return MyError("this is not URL for git")
 	}
 	names := urlPattern.SubexpNames()[1:]
-	m := urlPattern.FindStringSubmatch(self.RawUrl)
+	m := urlPattern.FindStringSubmatch(self.RawUrl)[1:]
 	matches := make(map[string]string)
 	for i, str := range m {
+		log.Print(names[i], i, str)
 		matches[names[i]] = str
 	}
-	self.scheme = matches["scheme"]
-	self.username = matches["username"]
-	self.host = matches["host"]
-	self.path = matches["path"]
+	self.Scheme = matches["scheme"]
+	self.Username = matches["username"]
+	self.Host = matches["host"]
+	self.Path = matches["path"]
 	return
 }
