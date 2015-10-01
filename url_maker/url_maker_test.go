@@ -1,4 +1,4 @@
-package git_url_maker
+package url_maker
 
 import (
 	"testing"

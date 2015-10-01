@@ -1,10 +1,10 @@
-package git_url_maker
+package url_maker
 
 import (
 	"regexp"
 )
 
-var gitUrlPattern = regexp.MustCompile(`^(?P<scheme>(?:https?|git|ssh)://)(?P<username>[^@]+@)?(?P<host>[^/]+)/(?P<path>.*?)(?:\.git)?`)
+var urlPattern = regexp.MustCompile(`^(?P<scheme>(?:https?|git|ssh)://)(?P<username>[^@]+@)?(?P<host>[^/]+)/(?P<path>.*?)(?:\.git)?`)
 
 type MyError string
 
@@ -29,11 +29,11 @@ func New(rawUrl string) (self GitUrl, err error) {
 }
 
 func (self GitUrl) Parse() (err error) {
-	if !gitUrlPattern.MatchString(self.RawUrl) {
+	if !urlPattern.MatchString(self.RawUrl) {
 		return MyError("this is not URL for git")
 	}
-	names := gitUrlPattern.SubexpNames()[1:]
-	m := gitUrlPattern.FindStringSubmatch(self.RawUrl)
+	names := urlPattern.SubexpNames()[1:]
+	m := urlPattern.FindStringSubmatch(self.RawUrl)
 	matches := make(map[string]string)
 	for i, str := range m {
 		matches[names[i]] = str
