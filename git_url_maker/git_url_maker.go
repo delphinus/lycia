@@ -14,7 +14,8 @@ func (self MyError) Error() (err string) {
 }
 
 type GitUrl struct {
-	rawUrl   string
+	RawUrl   string
+	WebUrl   string
 	scheme   string
 	username string
 	host     string
@@ -22,17 +23,17 @@ type GitUrl struct {
 }
 
 func New(rawUrl string) (self GitUrl, err error) {
-	self = GitUrl{rawUrl: rawUrl}
+	self = GitUrl{RawUrl: rawUrl}
 	err = self.Parse()
 	return
 }
 
 func (self GitUrl) Parse() (err error) {
-	if !gitUrlPattern.MatchString(self.rawUrl) {
+	if !gitUrlPattern.MatchString(self.RawUrl) {
 		return MyError("this is not URL for git")
 	}
 	names := gitUrlPattern.SubexpNames()[1:]
-	m := gitUrlPattern.FindStringSubmatch(self.rawUrl)
+	m := gitUrlPattern.FindStringSubmatch(self.RawUrl)
 	matches := make(map[string]string)
 	for i, str := range m {
 		matches[names[i]] = str

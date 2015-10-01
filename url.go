@@ -1,15 +1,11 @@
 package main
 
 import (
+	"github.com/delphinus35/lycia/git_url_maker"
 	"log"
 	"net/url"
 	"os/exec"
-	"regexp"
 )
-
-var gitUrlPattern = regexp.MustCompile("(?m)^origin\\s+(.*) \\(fetch\\)$")
-var hasSchemePattern = regexp.MustCompile("^([^:]+)://")
-var scpLikeUrlPattern = regexp.MustCompile("^([^@]+@)?([^:]+):/?(.+)$")
 
 func NewURL(dir string, ref string) (url *url.URL, err error) {
 	cmd := exec.Command("git", "remote", "-v")
@@ -18,7 +14,7 @@ func NewURL(dir string, ref string) (url *url.URL, err error) {
 	if cmdErr != nil {
 		log.Fatalf("can not exec 'git remove -v' : %s", cmdErr)
 	}
-	outStr := string(out)
-	url, err = url.Parse("https://github.com/powerline/powerline")
+	maker, err := git_url_maker.New(string(out))
+	url, err = url.Parse(maker.WebUrl)
 	return
 }
