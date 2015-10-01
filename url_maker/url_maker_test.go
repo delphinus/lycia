@@ -15,8 +15,26 @@ func TestParseError(t *testing.T) {
 }
 
 func TestParseGit(t *testing.T) {
+	var expected string
 	m, _ := New("git://github.com/hoge/fuga.git")
-	if m.Scheme != "git" {
-		t.Errorf(errFormat, m.Scheme, "git")
+
+	expected = "git"
+	if m.Scheme != expected {
+		t.Errorf(errFormat, m.Scheme, expected)
+	}
+
+	expected = ""
+	if m.Username != expected {
+		t.Errorf(errFormat, m.Username, expected)
+	}
+
+	expected = "github.com"
+	if m.Host != expected {
+		t.Errorf(errFormat, m.Username, expected)
+	}
+
+	expected = "hoge/fuga"
+	if m.Path != expected {
+		t.Errorf(errFormat, m.Username, expected)
 	}
 }

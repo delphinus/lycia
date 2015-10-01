@@ -1,11 +1,14 @@
 package url_maker
 
 import (
-	"log"
 	"regexp"
 )
 
-var urlPattern = regexp.MustCompile(`^(?P<scheme>https?|git|ssh)://(?P<username>[^@]+@)?(?P<host>[^/]+)/(?P<path>.*?)(?:\.git)?`)
+var urlPattern = regexp.MustCompile(
+	`^(?P<scheme>https?|git|ssh)://` +
+		`(?P<username>[^@/]+@)?` +
+		`(?P<host>[^/]+)/` +
+		`(?P<path>.*?)(?:\.git)?$`)
 
 type MyError string
 
@@ -37,7 +40,6 @@ func (self *GitUrl) Parse() (err error) {
 	m := urlPattern.FindStringSubmatch(self.RawUrl)[1:]
 	matches := make(map[string]string)
 	for i, str := range m {
-		log.Print(names[i], i, str)
 		matches[names[i]] = str
 	}
 	self.Scheme = matches["scheme"]
