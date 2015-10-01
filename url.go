@@ -7,7 +7,7 @@ import (
 	"regexp"
 )
 
-var gitUrlPattern = regexp.MustCompile("^origin\\s+(.*) \\(fetch\\)$")
+var gitUrlPattern = regexp.MustCompile("(?m)^origin\\s+(.*) \\(fetch\\)$")
 var hasSchemePattern = regexp.MustCompile("^([^:]+)://")
 var scpLikeUrlPattern = regexp.MustCompile("^([^@]+@)?([^:]+):/?(.+)$")
 
