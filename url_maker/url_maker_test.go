@@ -66,7 +66,7 @@ func TestParseSsh(t *testing.T) {
 
 func TestParseSimpleSsh(t *testing.T) {
 	var expected string
-	m, _ := New("git@github.com:hoge/fuga.git")
+	m, _ := New("git@github.com:/hoge/fuga.git")
 
 	expected = ""
 	if m.Scheme != expected {

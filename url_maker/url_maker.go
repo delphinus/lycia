@@ -1,6 +1,7 @@
 package url_maker
 
 import (
+	"fmt"
 	"regexp"
 )
 
@@ -29,6 +30,9 @@ type GitUrl struct {
 func New(rawUrl string) (self GitUrl, err error) {
 	self = GitUrl{RawUrl: rawUrl}
 	err = self.Parse()
+	if err != nil {
+		self.makeWebUrl()
+	}
 	return
 }
 
@@ -47,4 +51,8 @@ func (self *GitUrl) Parse() (err error) {
 	self.Host = matches["host"]
 	self.Path = matches["path"]
 	return
+}
+
+func (self *GitUrl) makeWebUrl() {
+	self.WebUrl = fmt.Sprintf("%s://%s/%s")
 }
