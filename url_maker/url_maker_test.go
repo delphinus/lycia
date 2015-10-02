@@ -38,3 +38,78 @@ func TestParseGit(t *testing.T) {
 		t.Errorf(errFormat, m.Username, expected)
 	}
 }
+
+func TestParseSsh(t *testing.T) {
+	var expected string
+	m, _ := New("ssh://git@github.com/hoge/fuga.git")
+
+	expected = "ssh"
+	if m.Scheme != expected {
+		t.Errorf(errFormat, m.Scheme, expected)
+	}
+
+	expected = "git"
+	if m.Username != expected {
+		t.Errorf(errFormat, m.Username, expected)
+	}
+
+	expected = "github.com"
+	if m.Host != expected {
+		t.Errorf(errFormat, m.Username, expected)
+	}
+
+	expected = "hoge/fuga"
+	if m.Path != expected {
+		t.Errorf(errFormat, m.Username, expected)
+	}
+}
+
+func TestParseSimpleSsh(t *testing.T) {
+	var expected string
+	m, _ := New("git@github.com:hoge/fuga.git")
+
+	expected = ""
+	if m.Scheme != expected {
+		t.Errorf(errFormat, m.Scheme, expected)
+	}
+
+	expected = "git"
+	if m.Username != expected {
+		t.Errorf(errFormat, m.Username, expected)
+	}
+
+	expected = "github.com"
+	if m.Host != expected {
+		t.Errorf(errFormat, m.Username, expected)
+	}
+
+	expected = "hoge/fuga"
+	if m.Path != expected {
+		t.Errorf(errFormat, m.Username, expected)
+	}
+}
+
+func TestParseHttps(t *testing.T) {
+	var expected string
+	m, _ := New("https://github.com/hoge/fuga.git")
+
+	expected = "https"
+	if m.Scheme != expected {
+		t.Errorf(errFormat, m.Scheme, expected)
+	}
+
+	expected = ""
+	if m.Username != expected {
+		t.Errorf(errFormat, m.Username, expected)
+	}
+
+	expected = "github.com"
+	if m.Host != expected {
+		t.Errorf(errFormat, m.Username, expected)
+	}
+
+	expected = "hoge/fuga"
+	if m.Path != expected {
+		t.Errorf(errFormat, m.Username, expected)
+	}
+}
