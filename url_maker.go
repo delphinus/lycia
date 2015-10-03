@@ -11,9 +11,9 @@ var urlPattern = regexp.MustCompile(
 		`(?P<host>[^:/]+)[:/]` +
 		`(?P<path>.*?)(?:\.git)?$`)
 
-type MyError string
+type GitUrlError string
 
-func (err MyError) Error() string {
+func (err GitUrlError) Error() string {
 	return string(err)
 }
 
@@ -37,7 +37,7 @@ func UrlMaker(rawUrl string) (gitUrl GitUrl, err error) {
 
 func (gitUrl *GitUrl) Parse() (err error) {
 	if !urlPattern.MatchString(gitUrl.RawUrl) {
-		return MyError("this is not URL for git")
+		return GitUrlError("this is not URL for git")
 	}
 	names := urlPattern.SubexpNames()[1:]
 	m := urlPattern.FindStringSubmatch(gitUrl.RawUrl)[1:]
