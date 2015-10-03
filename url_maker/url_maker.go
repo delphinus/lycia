@@ -12,9 +12,8 @@ var urlPattern = regexp.MustCompile(
 
 type MyError string
 
-func (self MyError) Error() (err string) {
-	err = string(self)
-	return
+func (err MyError) Error() string {
+	return string(err)
 }
 
 type GitUrl struct {
@@ -26,25 +25,25 @@ type GitUrl struct {
 	Path     string
 }
 
-func New(rawUrl string) (self GitUrl, err error) {
-	self = GitUrl{RawUrl: rawUrl}
-	err = self.Parse()
+func New(rawUrl string) (url GitUrl, err error) {
+	url = GitUrl{RawUrl: rawUrl}
+	err = url.Parse()
 	return
 }
 
-func (self *GitUrl) Parse() (err error) {
-	if !urlPattern.MatchString(self.RawUrl) {
+func (url *GitUrl) Parse() (err error) {
+	if !urlPattern.MatchString(url.RawUrl) {
 		return MyError("this is not URL for git")
 	}
 	names := urlPattern.SubexpNames()[1:]
-	m := urlPattern.FindStringSubmatch(self.RawUrl)[1:]
+	m := urlPattern.FindStringSubmatch(url.RawUrl)[1:]
 	matches := make(map[string]string)
 	for i, str := range m {
 		matches[names[i]] = str
 	}
-	self.Scheme = matches["scheme"]
-	self.Username = matches["username"]
-	self.Host = matches["host"]
-	self.Path = matches["path"]
+	url.Scheme = matches["scheme"]
+	url.Username = matches["username"]
+	url.Host = matches["host"]
+	url.Path = matches["path"]
 	return
 }
