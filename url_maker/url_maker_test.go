@@ -30,12 +30,12 @@ func TestParseGit(t *testing.T) {
 
 	expected = "github.com"
 	if m.Host != expected {
-		t.Errorf(errFormat, m.Username, expected)
+		t.Errorf(errFormat, m.Host, expected)
 	}
 
 	expected = "hoge/fuga"
 	if m.Path != expected {
-		t.Errorf(errFormat, m.Username, expected)
+		t.Errorf(errFormat, m.Path, expected)
 	}
 }
 
@@ -55,12 +55,12 @@ func TestParseSsh(t *testing.T) {
 
 	expected = "github.com"
 	if m.Host != expected {
-		t.Errorf(errFormat, m.Username, expected)
+		t.Errorf(errFormat, m.Host, expected)
 	}
 
 	expected = "hoge/fuga"
 	if m.Path != expected {
-		t.Errorf(errFormat, m.Username, expected)
+		t.Errorf(errFormat, m.Path, expected)
 	}
 }
 
@@ -80,12 +80,12 @@ func TestParseSimpleSsh(t *testing.T) {
 
 	expected = "github.com"
 	if m.Host != expected {
-		t.Errorf(errFormat, m.Username, expected)
+		t.Errorf(errFormat, m.Host, expected)
 	}
 
 	expected = "hoge/fuga"
 	if m.Path != expected {
-		t.Errorf(errFormat, m.Username, expected)
+		t.Errorf(errFormat, m.Path, expected)
 	}
 }
 
@@ -105,11 +105,11 @@ func TestParseHttps(t *testing.T) {
 
 	expected = "github.com"
 	if m.Host != expected {
-		t.Errorf(errFormat, m.Username, expected)
+		t.Errorf(errFormat, m.Host, expected)
 	}
 
 	expected = "hoge/fuga"
 	if m.Path != expected {
-		t.Errorf(errFormat, m.Username, expected)
+		t.Errorf(errFormat, m.Path, expected)
 	}
 }
