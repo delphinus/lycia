@@ -7,7 +7,7 @@ import (
 var urlPattern = regexp.MustCompile(
 	`^(?:(?P<scheme>https?|git|ssh)://)?` +
 		`(?:(?P<username>[^@/]+)@)?` +
-		`(?P<host>[^/]+)/` +
+		`(?P<host>[^:/]+)[:/]` +
 		`(?P<path>.*?)(?:\.git)?$`)
 
 type MyError string
