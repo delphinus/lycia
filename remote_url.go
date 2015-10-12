@@ -6,7 +6,7 @@ import (
 	"os/exec"
 )
 
-func NewURL(dir string, ref string) (url *url.URL, err error) {
+func RemoteURL(dir string, ref string) (url *url.URL, err error) {
 	cmd := exec.Command("git", "remote", "-v")
 	cmd.Dir = dir
 	out, cmdErr := cmd.Output()
