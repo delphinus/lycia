@@ -1,4 +1,4 @@
-package url_maker
+package main
 
 import (
 	"fmt"
@@ -26,7 +26,7 @@ type GitUrl struct {
 	Path     string
 }
 
-func New(rawUrl string) (gitUrl GitUrl, err error) {
+func UrlMaker(rawUrl string) (gitUrl GitUrl, err error) {
 	gitUrl = GitUrl{RawUrl: rawUrl}
 	err = gitUrl.Parse()
 	if err != nil {
@@ -53,5 +53,5 @@ func (gitUrl *GitUrl) Parse() (err error) {
 }
 
 func (gitUrl *GitUrl) makeWebUrl() {
-	gitUrl.WebUrl = fmt.Sprintf("%s://%s/%s")
+	gitUrl.WebUrl = fmt.Sprintf("https://%s/%s", gitUrl.Host, gitUrl.Path)
 }
