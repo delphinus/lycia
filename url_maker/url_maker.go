@@ -13,9 +13,8 @@ var urlPattern = regexp.MustCompile(
 
 type MyError string
 
-func (self MyError) Error() (err string) {
-	err = string(self)
-	return
+func (err MyError) Error() string {
+	return string(err)
 }
 
 type GitUrl struct {
@@ -27,32 +26,32 @@ type GitUrl struct {
 	Path     string
 }
 
-func New(rawUrl string) (self GitUrl, err error) {
-	self = GitUrl{RawUrl: rawUrl}
-	err = self.Parse()
+func New(rawUrl string) (gitUrl GitUrl, err error) {
+	gitUrl = GitUrl{RawUrl: rawUrl}
+	err = gitUrl.Parse()
 	if err != nil {
-		self.makeWebUrl()
+		gitUrl.makeWebUrl()
 	}
 	return
 }
 
-func (self *GitUrl) Parse() (err error) {
-	if !urlPattern.MatchString(self.RawUrl) {
+func (gitUrl *GitUrl) Parse() (err error) {
+	if !urlPattern.MatchString(gitUrl.RawUrl) {
 		return MyError("this is not URL for git")
 	}
 	names := urlPattern.SubexpNames()[1:]
-	m := urlPattern.FindStringSubmatch(self.RawUrl)[1:]
+	m := urlPattern.FindStringSubmatch(gitUrl.RawUrl)[1:]
 	matches := make(map[string]string)
 	for i, str := range m {
 		matches[names[i]] = str
 	}
-	self.Scheme = matches["scheme"]
-	self.Username = matches["username"]
-	self.Host = matches["host"]
-	self.Path = matches["path"]
+	gitUrl.Scheme = matches["scheme"]
+	gitUrl.Username = matches["username"]
+	gitUrl.Host = matches["host"]
+	gitUrl.Path = matches["path"]
 	return
 }
 
-func (self *GitUrl) makeWebUrl() {
-	self.WebUrl = fmt.Sprintf("%s://%s/%s")
+func (gitUrl *GitUrl) makeWebUrl() {
+	gitUrl.WebUrl = fmt.Sprintf("%s://%s/%s")
 }
