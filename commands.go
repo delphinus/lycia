@@ -35,6 +35,6 @@ func doOpen(c *cli.Context) {
 		argDir = "."
 	}
 
-	url, err := NewURL(argDir, ref)
+	url, err := RemoteURL(argDir, ref)
 	fmt.Println(url, err)
 }
