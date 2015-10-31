@@ -22,6 +22,14 @@ var openFlags = []cli.Flag{
 		Value: "master",
 		Usage: "Ref to open such as branch, tag and hash",
 	},
+	cli.IntFlag{
+		Name:  "from, f",
+		Usage: "Line to highlight from",
+	},
+	cli.IntFlag{
+		Name:  "to, t",
+		Usage: "Line to highlight to",
+	},
 }
 
 var commandOpen = cli.Command{
@@ -41,8 +49,10 @@ func doOpen(c *cli.Context) {
 	argPath := c.Args().Get(0)
 	root := c.String("root")
 	ref := c.String("ref")
+	from := c.Int("from")
+	to := c.Int("to")
 
-	url, err := RemoteURL(root, ref, argPath)
+	url, err := RemoteURL(root, ref, argPath, from, to)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {

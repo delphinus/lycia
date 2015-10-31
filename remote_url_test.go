@@ -29,7 +29,7 @@ func withFakeGirDir(tmpRoot string) {
 
 func TestRemoteUrlError(t *testing.T) {
 	withFakeEnv(t, func(tmpRoot string) {
-		_, err := RemoteURL(tmpRoot, "some_ref", "")
+		_, err := RemoteURL(tmpRoot, "some_ref", "", 0, 0)
 
 		expected := "can not exec 'git remove -v'"
 		if ok, _ := regexp.MatchString(expected, err.Error()); !ok {
@@ -44,7 +44,7 @@ func TestRemoteUrlNoRemote(t *testing.T) {
 		cmd.Dir = tmpRoot
 		_ = cmd.Run()
 
-		_, err := RemoteURL(tmpRoot, "master", "")
+		_, err := RemoteURL(tmpRoot, "master", "", 0, 0)
 
 		expected := "git remote is not defined"
 		if ok, _ := regexp.MatchString(expected, err.Error()); !ok {
@@ -57,7 +57,7 @@ func TestRemoteUrlWithRemote(t *testing.T) {
 	withFakeEnv(t, func(tmpRoot string) {
 		withFakeGirDir(tmpRoot)
 
-		url, err := RemoteURL(tmpRoot, "master", "")
+		url, err := RemoteURL(tmpRoot, "master", "", 0, 0)
 		if err != nil {
 			t.Errorf(`RemoteURL returned err "%s"`, err)
 		}
@@ -74,7 +74,7 @@ func TestRemoteUrlWithPath(t *testing.T) {
 		withFakeGirDir(tmpRoot)
 
 		path := "some/deep/dir.go"
-		url, err := RemoteURL(tmpRoot, "master", path)
+		url, err := RemoteURL(tmpRoot, "master", path, 0, 0)
 		if err != nil {
 			t.Errorf(`RemoteURL returned err "%s"`, err)
 		}
@@ -91,13 +91,30 @@ func TestRemoteUrlWithPathAndRef(t *testing.T) {
 		withFakeGirDir(tmpRoot)
 
 		path := "some/deep/dir.go"
-		url, err := RemoteURL(tmpRoot, "develop", path)
+		url, err := RemoteURL(tmpRoot, "develop", path, 0, 0)
 		if err != nil {
 			t.Errorf(`RemoteURL returned err "%s"`, path)
 		}
 
 		expected := "https://git.example.com/git/git/blob/develop/" + path
 		if url != nil && url.String() != expected {
+			t.Errorf(`got "%s" want "%s"`, url, expected)
+		}
+	})
+}
+
+func TestRemoteUrlWithFrom(t *testing.T) {
+	withFakeEnv(t, func(tmpRoot string) {
+		withFakeGirDir(tmpRoot)
+
+		path := "some/deep/dir.go"
+		url, err := RemoteURL(tmpRoot, "develop", path, 30, 0)
+		if err != nil {
+			t.Errorf(`RemoteURL returned err "%s"`, path)
+		}
+
+		expected := "https://git.example.com/git/git/blob/develop/some/deep/dir.go#L30"
+		if url != url && url.String() != expected {
 			t.Errorf(`got "%s" want "%s"`, url, expected)
 		}
 	})
