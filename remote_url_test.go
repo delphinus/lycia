@@ -1,65 +1,66 @@
 package main
 
 import (
-	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"regexp"
 	"testing"
 )
 
-// testing exec.Command
-// referred from http://npf.io/2015/06/testing-exec-command/
-func fakeExecCommand(command string, args ...string) *exec.Cmd {
-	cs := []string{"-test.run=TestHelperProcess", "--", command}
-	cs = append(cs, args...)
-	cmd := exec.Command(os.Args[0], cs...)
-	cmd.Env = []string{"GO_WANT_HELPER_PROCESS=1"}
-	return cmd
+func withFakeEnv(t *testing.T, block func(string)) {
+	tmpRoot, err := ioutil.TempDir("", "lycia_")
+	if err != nil {
+		t.Fatalf("cloud not create tempdir: %s", err)
+	}
+	defer func() { os.RemoveAll(tmpRoot) }()
+
+	block(tmpRoot)
 }
 
-func TestError(t *testing.T) {
-	execCommand = fakeExecCommand
-	defer func() { execCommand = exec.Command }()
-	_, err := RemoteURL(".", "some_ref")
-	expected := "can not exec 'git remove -v' : exit status 2"
-	if err.Error() != expected {
-		t.Errorf(errFormat, err, expected)
-	}
+func TestRemoteUrlError(t *testing.T) {
+	withFakeEnv(t, func(tmpRoot string) {
+		_, err := RemoteURL(tmpRoot, "some_ref")
+
+		expected := "can not exec 'git remove -v'"
+		if ok, _ := regexp.MatchString(expected, err.Error()); !ok {
+			t.Errorf(`got "%s" want "%s"`, err, expected)
+		}
+	})
 }
 
-// TestHelperProcess isn't a real test. It's used as a helper process
-// for TestParameterRun.
-func TestHelperProcess(*testing.T) {
-	if os.Getenv("GO_WANT_HELPER_PROCESS") != "1" {
-		return
-	}
-	defer os.Exit(0)
+func TestRemoteUrlNoRemote(t *testing.T) {
+	withFakeEnv(t, func(tmpRoot string) {
+		cmd := exec.Command("git", "init")
+		cmd.Dir = tmpRoot
+		_ = cmd.Run()
 
-	args := os.Args
-	for len(args) > 0 {
-		if args[0] == "--" {
-			args = args[1:]
-			break
-		}
-		args = args[1:]
-	}
-	if len(args) == 0 {
-		fmt.Fprintf(os.Stderr, "No command\n")
-		os.Exit(2)
-	}
+		_, err := RemoteURL(tmpRoot, "master")
 
-	cmd, args := args[0], args[1:]
-	switch cmd {
-	case "git":
-		iargs := []interface{}{}
-		for _, s := range args {
-			iargs = append(iargs, s)
+		expected := "git remote is not defined"
+		if ok, _ := regexp.MatchString(expected, err.Error()); !ok {
+			t.Errorf(`got "%s" want "%s"`, err, expected)
 		}
-		//fmt.Println(iargs...)
-		fmt.Fprintf(os.Stderr, "HOGE error\n")
-		os.Exit(2)
-	default:
-		fmt.Fprintf(os.Stderr, "Unknown command %q\n", cmd)
-		os.Exit(2)
-	}
+	})
+}
+
+func TestRemoteUrlWithRemote(t *testing.T) {
+	withFakeEnv(t, func(tmpRoot string) {
+		cmd := exec.Command("git", "init")
+		cmd.Dir = tmpRoot
+		_ = cmd.Run()
+		cmd = exec.Command("git", "remote", "add", "origin", "git://git.example.com/git/git")
+		cmd.Dir = tmpRoot
+		_ = cmd.Run()
+
+		url, err := RemoteURL(tmpRoot, "master")
+		if err != nil {
+			t.Errorf(`RemoteURL returned err "%s"`, err)
+		}
+
+		expected := "https://git.example.com/git/git"
+		if url != nil && url.String() != "https://git.example.com/git/git" {
+			t.Errorf(`got "%s" want "%s"`, url, expected)
+		}
+	})
 }

@@ -29,7 +29,7 @@ type GitUrl struct {
 func UrlMaker(rawUrl string) (gitUrl GitUrl, err error) {
 	gitUrl = GitUrl{RawUrl: rawUrl}
 	err = gitUrl.Parse()
-	if err != nil {
+	if err == nil {
 		gitUrl.makeWebUrl()
 	}
 	return
