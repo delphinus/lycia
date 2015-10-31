@@ -25,10 +25,13 @@ var openFlags = []cli.Flag{
 }
 
 var commandOpen = cli.Command{
-	Name:  "open",
-	Usage: "Open github repository page",
+	Name:    "open",
+	Aliases: []string{"o"},
+	Usage:   "Open github repository page",
 	Description: `
-    hogehoge
+Open URL link that can be identified by git-remote command.
+If you do not specify the path, you can see the top page.
+And if you specify, you can see the path on Web with highlighted lines.
 `,
 	Action: doOpen,
 	Flags:  openFlags,
