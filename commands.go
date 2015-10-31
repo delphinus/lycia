@@ -13,6 +13,11 @@ var Commands = []cli.Command{
 
 var openFlags = []cli.Flag{
 	cli.StringFlag{
+		Name:  "root",
+		Value: ".",
+		Usage: "Specify root dir for repository",
+	},
+	cli.StringFlag{
 		Name:  "ref, r",
 		Value: "master",
 		Usage: "Ref to open such as branch, tag and hash",
@@ -30,14 +35,11 @@ var commandOpen = cli.Command{
 }
 
 func doOpen(c *cli.Context) {
-	argDir := c.Args().Get(0)
+	argPath := c.Args().Get(0)
+	root := c.String("root")
 	ref := c.String("ref")
 
-	if argDir == "" {
-		argDir = "."
-	}
-
-	url, err := RemoteURL(argDir, ref)
+	url, err := RemoteURL(root, ref, argPath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {

@@ -9,7 +9,7 @@ import (
 
 var remoteUrlPattern = regexp.MustCompile(`(?m)^origin\s+(.*)\s+\(fetch\)$`)
 
-func RemoteURL(dir string, ref string) (parsedURL *url.URL, err error) {
+func RemoteURL(dir string, ref string, path string) (parsedURL *url.URL, err error) {
 	cmd := exec.Command("git", "remote", "-v")
 	cmd.Dir = dir
 	out, cmdErr := cmd.Output()
@@ -30,6 +30,16 @@ func RemoteURL(dir string, ref string) (parsedURL *url.URL, err error) {
 		rawUrl := remoteUrlPattern.FindStringSubmatch(outStr)[1]
 		gitUrl, _ := UrlMaker(rawUrl)
 		parsedURL, err = url.Parse(gitUrl.WebUrl)
+		if err != nil {
+			return
+		}
+		if path == "" {
+			if ref != "master" {
+				parsedURL.Path = parsedURL.Path + "/tree/" + ref
+			}
+		} else {
+			parsedURL.Path = fmt.Sprintf("%s/blob/%s/%s", parsedURL.Path, ref, path)
+		}
 	}
 	return
 }

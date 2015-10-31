@@ -18,9 +18,18 @@ func withFakeEnv(t *testing.T, block func(string)) {
 	block(tmpRoot)
 }
 
+func withFakeGirDir(tmpRoot string) {
+	cmd := exec.Command("git", "init")
+	cmd.Dir = tmpRoot
+	_ = cmd.Run()
+	cmd = exec.Command("git", "remote", "add", "origin", "git://git.example.com/git/git")
+	cmd.Dir = tmpRoot
+	_ = cmd.Run()
+}
+
 func TestRemoteUrlError(t *testing.T) {
 	withFakeEnv(t, func(tmpRoot string) {
-		_, err := RemoteURL(tmpRoot, "some_ref")
+		_, err := RemoteURL(tmpRoot, "some_ref", "")
 
 		expected := "can not exec 'git remove -v'"
 		if ok, _ := regexp.MatchString(expected, err.Error()); !ok {
@@ -35,7 +44,7 @@ func TestRemoteUrlNoRemote(t *testing.T) {
 		cmd.Dir = tmpRoot
 		_ = cmd.Run()
 
-		_, err := RemoteURL(tmpRoot, "master")
+		_, err := RemoteURL(tmpRoot, "master", "")
 
 		expected := "git remote is not defined"
 		if ok, _ := regexp.MatchString(expected, err.Error()); !ok {
@@ -46,20 +55,49 @@ func TestRemoteUrlNoRemote(t *testing.T) {
 
 func TestRemoteUrlWithRemote(t *testing.T) {
 	withFakeEnv(t, func(tmpRoot string) {
-		cmd := exec.Command("git", "init")
-		cmd.Dir = tmpRoot
-		_ = cmd.Run()
-		cmd = exec.Command("git", "remote", "add", "origin", "git://git.example.com/git/git")
-		cmd.Dir = tmpRoot
-		_ = cmd.Run()
+		withFakeGirDir(tmpRoot)
 
-		url, err := RemoteURL(tmpRoot, "master")
+		url, err := RemoteURL(tmpRoot, "master", "")
 		if err != nil {
 			t.Errorf(`RemoteURL returned err "%s"`, err)
 		}
 
 		expected := "https://git.example.com/git/git"
-		if url != nil && url.String() != "https://git.example.com/git/git" {
+		if url != nil && url.String() != expected {
+			t.Errorf(`got "%s" want "%s"`, url, expected)
+		}
+	})
+}
+
+func TestRemoteUrlWithPath(t *testing.T) {
+	withFakeEnv(t, func(tmpRoot string) {
+		withFakeGirDir(tmpRoot)
+
+		path := "some/deep/dir.go"
+		url, err := RemoteURL(tmpRoot, "master", path)
+		if err != nil {
+			t.Errorf(`RemoteURL returned err "%s"`, err)
+		}
+
+		expected := "https://git.example.com/git/git/blob/master/" + path
+		if url != nil && url.String() != expected {
+			t.Errorf(`got "%s" want "%s"`, url, expected)
+		}
+	})
+}
+
+func TestRemoteUrlWithPathAndRef(t *testing.T) {
+	withFakeEnv(t, func(tmpRoot string) {
+		withFakeGirDir(tmpRoot)
+
+		path := "some/deep/dir.go"
+		url, err := RemoteURL(tmpRoot, "develop", path)
+		if err != nil {
+			t.Errorf(`RemoteURL returned err "%s"`, path)
+		}
+
+		expected := "https://git.example.com/git/git/blob/develop/" + path
+		if url != nil && url.String() != expected {
 			t.Errorf(`got "%s" want "%s"`, url, expected)
 		}
 	})
