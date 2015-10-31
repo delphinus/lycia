@@ -22,7 +22,7 @@ func RemoteURL(dir string, ref string) (parsedURL *url.URL, err error) {
 	} else if outStr == "" {
 		err = MyError("git remote is not defined")
 
-	} else if !remoteUrlPattern.MatchString(string(out)) {
+	} else if !remoteUrlPattern.MatchString(outStr) {
 		msg := fmt.Sprintf("unknown git remote string: %s", outStr)
 		err = MyError(msg)
 
