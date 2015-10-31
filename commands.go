@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/codegangsta/cli"
+	"os"
+	"os/exec"
 )
 
 var Commands = []cli.Command{
@@ -35,6 +37,12 @@ func doOpen(c *cli.Context) {
 		argDir = "."
 	}
 
-	url, err := NewURL(argDir, ref)
-	fmt.Println(url, err)
+	url, err := RemoteURL(argDir, ref)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
+	} else {
+		fmt.Printf("opening url: \"%s\"...\n", url.String())
+		cmd := exec.Command("open", url.String())
+		cmd.Run()
+	}
 }

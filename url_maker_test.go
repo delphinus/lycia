@@ -1,4 +1,4 @@
-package url_maker
+package main
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 var errFormat = `got "%s" want "%s"`
 
 func TestParseError(t *testing.T) {
-	_, err := New("some_bad_string")
+	_, err := UrlMaker("some_bad_string")
 	expected := "this is not URL for git"
 	if err.Error() != expected {
 		t.Errorf(errFormat, err.Error(), expected)
@@ -16,7 +16,7 @@ func TestParseError(t *testing.T) {
 
 func TestParseGit(t *testing.T) {
 	var expected string
-	m, _ := New("git://github.com/hoge/fuga.git")
+	m, _ := UrlMaker("git://github.com/hoge/fuga.git")
 
 	expected = "git"
 	if m.Scheme != expected {
@@ -41,7 +41,7 @@ func TestParseGit(t *testing.T) {
 
 func TestParseSsh(t *testing.T) {
 	var expected string
-	m, _ := New("ssh://git@github.com/hoge/fuga.git")
+	m, _ := UrlMaker("ssh://git@github.com/hoge/fuga.git")
 
 	expected = "ssh"
 	if m.Scheme != expected {
@@ -66,7 +66,7 @@ func TestParseSsh(t *testing.T) {
 
 func TestParseSimpleSsh(t *testing.T) {
 	var expected string
-	m, _ := New("git@github.com:hoge/fuga.git")
+	m, _ := UrlMaker("git@github.com:/hoge/fuga.git")
 
 	expected = ""
 	if m.Scheme != expected {
@@ -83,7 +83,7 @@ func TestParseSimpleSsh(t *testing.T) {
 		t.Errorf(errFormat, m.Host, expected)
 	}
 
-	expected = "hoge/fuga"
+	expected = "/hoge/fuga"
 	if m.Path != expected {
 		t.Errorf(errFormat, m.Path, expected)
 	}
@@ -91,7 +91,7 @@ func TestParseSimpleSsh(t *testing.T) {
 
 func TestParseHttps(t *testing.T) {
 	var expected string
-	m, _ := New("https://github.com/hoge/fuga.git")
+	m, _ := UrlMaker("https://github.com/hoge/fuga.git")
 
 	expected = "https"
 	if m.Scheme != expected {
