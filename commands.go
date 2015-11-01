@@ -21,7 +21,7 @@ func openOrPrintURL(urlString string, doPrint bool) {
 var Commands = []cli.Command{
 	commandOpen,
 	commandIssue,
-	//commandPullrequest,
+	commandPullrequest,
 }
 
 var commonFlags = []cli.Flag{
@@ -107,6 +107,34 @@ func doIssue(c *cli.Context) {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
 		urlString := url.IssueURL(argNumber)
+		openOrPrintURL(urlString, doPrint)
+	}
+}
+
+var commandPullrequest = cli.Command{
+	Name:    "pullrequest",
+	Aliases: []string{"p", "pull"},
+	Usage:   "Open github pullrequest page",
+	Description: `
+Open pullrequest page that is specified by number in Args.
+If number is not specified, it will open the top page of pullrequests.
+`,
+	Action: doPullrequest,
+	Flags:  pullrequestFlags,
+}
+
+var pullrequestFlags = commonFlags
+
+func doPullrequest(c *cli.Context) {
+	argNumber, _ := strconv.Atoi(c.Args().Get(0))
+	root := c.String("root")
+	doPrint := c.Bool("print")
+
+	url, err := RemoteURL(root)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
+	} else {
+		urlString := url.PullrequestURL(argNumber)
 		openOrPrintURL(urlString, doPrint)
 	}
 }
