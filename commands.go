@@ -11,6 +11,19 @@ var Commands = []cli.Command{
 	commandOpen,
 }
 
+var commandOpen = cli.Command{
+	Name:    "open",
+	Aliases: []string{"o"},
+	Usage:   "Open github repository page",
+	Description: `
+Open URL link that can be identified by git-remote command.
+If you do not specify the path, you can see the top page.
+And if you specify, you can see the path on Web with highlighted lines.
+`,
+	Action: doOpen,
+	Flags:  openFlags,
+}
+
 var openFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "root",
@@ -34,19 +47,6 @@ var openFlags = []cli.Flag{
 		Name:  "print, p",
 		Usage: "Print URL to STDOUT",
 	},
-}
-
-var commandOpen = cli.Command{
-	Name:    "open",
-	Aliases: []string{"o"},
-	Usage:   "Open github repository page",
-	Description: `
-Open URL link that can be identified by git-remote command.
-If you do not specify the path, you can see the top page.
-And if you specify, you can see the path on Web with highlighted lines.
-`,
-	Action: doOpen,
-	Flags:  openFlags,
 }
 
 func doOpen(c *cli.Context) {
