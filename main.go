@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-var Version = "HEAD"
+var Version = "v0.0.4"
 
 func main() {
 	newApp().Run(os.Args)
