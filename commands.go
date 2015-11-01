@@ -8,10 +8,32 @@ import (
 	"strconv"
 )
 
+func openOrPrintURL(urlString string, doPrint bool) {
+	if doPrint {
+		fmt.Print(urlString)
+	} else {
+		fmt.Printf("opening url: \"%s\"...\n", urlString)
+		cmd := exec.Command("open", urlString)
+		cmd.Run()
+	}
+}
+
 var Commands = []cli.Command{
 	commandOpen,
 	commandIssue,
 	//commandPullrequest,
+}
+
+var commonFlags = []cli.Flag{
+	cli.StringFlag{
+		Name:  "root",
+		Value: ".",
+		Usage: "Specify root dir for repository",
+	},
+	cli.BoolFlag{
+		Name:  "print, p",
+		Usage: "Print URL to STDOUT",
+	},
 }
 
 var commandOpen = cli.Command{
@@ -27,12 +49,8 @@ And if you specify, you can see the path on Web with highlighted lines.
 	Flags:  openFlags,
 }
 
-var openFlags = []cli.Flag{
-	cli.StringFlag{
-		Name:  "root",
-		Value: ".",
-		Usage: "Specify root dir for repository",
-	},
+var openFlags = append(
+	commonFlags,
 	cli.StringFlag{
 		Name:  "ref, r",
 		Value: "master",
@@ -46,11 +64,7 @@ var openFlags = []cli.Flag{
 		Name:  "to, t",
 		Usage: "Line to highlight to",
 	},
-	cli.BoolFlag{
-		Name:  "print, p",
-		Usage: "Print URL to STDOUT",
-	},
-}
+)
 
 func doOpen(c *cli.Context) {
 	argPath := c.Args().Get(0)
@@ -58,20 +72,14 @@ func doOpen(c *cli.Context) {
 	ref := c.String("ref")
 	from := c.Int("from")
 	to := c.Int("to")
-	print := c.Bool("print")
+	doPrint := c.Bool("print")
 
 	url, err := RemoteURL(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
 		urlString := url.SourceURL(ref, argPath, from, to)
-		if print {
-			fmt.Print(urlString)
-		} else {
-			fmt.Printf("opening url: \"%s\"...\n", urlString)
-			cmd := exec.Command("open", urlString)
-			cmd.Run()
-		}
+		openOrPrintURL(urlString, doPrint)
 	}
 }
 
@@ -87,34 +95,18 @@ If number is not specified, it will open the top page of issues.
 	Flags:  issueFlags,
 }
 
-var issueFlags = []cli.Flag{
-	cli.StringFlag{
-		Name:  "root",
-		Value: ".",
-		Usage: "Specify root dir for repository",
-	},
-	cli.BoolFlag{
-		Name:  "print, p",
-		Usage: "Print URL to STDOUT",
-	},
-}
+var issueFlags = commonFlags
 
 func doIssue(c *cli.Context) {
 	argNumber, _ := strconv.Atoi(c.Args().Get(0))
 	root := c.String("root")
-	print := c.Bool("print")
+	doPrint := c.Bool("print")
 
 	url, err := RemoteURL(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
 		urlString := url.IssueURL(argNumber)
-		if print {
-			fmt.Print(urlString)
-		} else {
-			fmt.Printf("opening url: \"%s\"...\n", urlString)
-			cmd := exec.Command("open", urlString)
-			cmd.Run()
-		}
+		openOrPrintURL(urlString, doPrint)
 	}
 }
