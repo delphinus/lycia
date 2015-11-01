@@ -9,7 +9,28 @@ import (
 
 var remoteUrlPattern = regexp.MustCompile(`(?m)^origin\s+(.*)\s+\(fetch\)$`)
 
-func RemoteURL(dir string, ref string, path string, from int, to int) (parsedURL *url.URL, err error) {
+type githubURL struct {
+	Ref string
+	*url.URL
+}
+
+func (g githubURL) SourceURL(path string, from int, to int) (sourceURL string) {
+	sourceURL = g.String()
+	if path != "" {
+		sourceURL = fmt.Sprintf("%s/blob/%s/%s", sourceURL, g.Ref, path)
+		if from != 0 {
+			sourceURL = fmt.Sprintf("%s#L%d", sourceURL, from)
+			if to != 0 {
+				sourceURL = fmt.Sprintf("%s-L%d", sourceURL, to)
+			}
+		}
+	} else if g.Ref != "master" {
+		sourceURL = fmt.Sprintf("%s/tree/%s", g.Path, g.Ref)
+	}
+	return
+}
+
+func RemoteURL(dir string, ref string) (parsed *githubURL, err error) {
 	cmd := exec.Command("git", "remote", "-v")
 	cmd.Dir = dir
 	out, cmdErr := cmd.Output()
@@ -29,20 +50,9 @@ func RemoteURL(dir string, ref string, path string, from int, to int) (parsedURL
 	} else {
 		rawUrl := remoteUrlPattern.FindStringSubmatch(outStr)[1]
 		gitUrl, _ := UrlMaker(rawUrl)
-		parsedURL, err = url.Parse(gitUrl.WebUrl)
-		if err != nil {
-			return
-		}
-		if path != "" {
-			parsedURL.Path = fmt.Sprintf("%s/blob/%s/%s", parsedURL.Path, ref, path)
-			if from != 0 {
-				parsedURL.Fragment = fmt.Sprintf("L%d", from)
-				if to != 0 {
-					parsedURL.Fragment = fmt.Sprintf("%s-L%d", parsedURL.Fragment, to)
-				}
-			}
-		} else if ref != "master" {
-			parsedURL.Path = fmt.Sprintf("%s/tree/%s", parsedURL.Path, ref)
+		parsedURL, err := url.Parse(gitUrl.WebUrl)
+		if err == nil {
+			parsed = &githubURL{ref, parsedURL}
 		}
 	}
 	return

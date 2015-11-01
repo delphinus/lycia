@@ -52,12 +52,13 @@ func doOpen(c *cli.Context) {
 	from := c.Int("from")
 	to := c.Int("to")
 
-	url, err := RemoteURL(root, ref, argPath, from, to)
+	url, err := RemoteURL(root, ref)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
-		fmt.Printf("opening url: \"%s\"...\n", url.String())
-		cmd := exec.Command("open", url.String())
+		urlString := url.SourceURL(argPath, from, to)
+		fmt.Printf("opening url: \"%s\"...\n", urlString)
+		cmd := exec.Command("open", urlString)
 		cmd.Run()
 	}
 }
