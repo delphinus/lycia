@@ -30,6 +30,10 @@ var openFlags = []cli.Flag{
 		Name:  "to, t",
 		Usage: "Line to highlight to",
 	},
+	cli.BoolFlag{
+		Name:  "print, p",
+		Usage: "Print URL to STDOUT",
+	},
 }
 
 var commandOpen = cli.Command{
@@ -51,14 +55,19 @@ func doOpen(c *cli.Context) {
 	ref := c.String("ref")
 	from := c.Int("from")
 	to := c.Int("to")
+	print := c.Bool("print")
 
 	url, err := RemoteURL(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
 		urlString := url.SourceURL(ref, argPath, from, to)
-		fmt.Printf("opening url: \"%s\"...\n", urlString)
-		cmd := exec.Command("open", urlString)
-		cmd.Run()
+		if print {
+			fmt.Print(urlString)
+		} else {
+			fmt.Printf("opening url: \"%s\"...\n", urlString)
+			cmd := exec.Command("open", urlString)
+			cmd.Run()
+		}
 	}
 }
