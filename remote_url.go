@@ -43,12 +43,13 @@ func (g githubURL) IssueURL(num int) (issueURL string) {
 
 func (g githubURL) PullrequestURL(num int) (pullrequestURL string) {
 	if num == 0 {
-		pullrequestURL = g.String() + "pulls"
+		pullrequestURL = g.String() + "/pulls"
 	} else if num > 0 {
 		pullrequestURL = fmt.Sprintf("%s/pull/%d", g.String(), num)
 	} else {
 		pullrequestURL = g.String()
 	}
+	return
 }
 
 func RemoteURL(dir string, ref string) (parsed *githubURL, err error) {

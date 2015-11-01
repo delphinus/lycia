@@ -141,3 +141,105 @@ func TestSourceUrlWithFromTo(t *testing.T) {
 		}
 	})
 }
+
+func TestIssueUrl(t *testing.T) {
+	withFakeEnv(t, func(tmpRoot string) {
+		withFakeGirDir(tmpRoot)
+
+		url, err := RemoteURL(tmpRoot, "")
+		if err != nil {
+			t.Errorf(`RemoteURL returned err "%s"`, err)
+		}
+
+		expected := "https://git.example.com/git/git/issues"
+		issueURL := url.IssueURL(0)
+		if issueURL != expected {
+			t.Errorf(`got "%s" want "%s"`, issueURL, expected)
+		}
+	})
+}
+
+func TestIssueUrlWithNum(t *testing.T) {
+	withFakeEnv(t, func(tmpRoot string) {
+		withFakeGirDir(tmpRoot)
+
+		url, err := RemoteURL(tmpRoot, "")
+		if err != nil {
+			t.Errorf(`RemoteURL returned err "%s"`, err)
+		}
+
+		expected := "https://git.example.com/git/git/issue/3"
+		issueURL := url.IssueURL(3)
+		if issueURL != expected {
+			t.Errorf(`got "%s" want "%s"`, issueURL, expected)
+		}
+	})
+}
+
+func TestIssueUrlWithMinusNum(t *testing.T) {
+	withFakeEnv(t, func(tmpRoot string) {
+		withFakeGirDir(tmpRoot)
+
+		url, err := RemoteURL(tmpRoot, "")
+		if err != nil {
+			t.Errorf(`RemoteURL returned err "%s"`, err)
+		}
+
+		expected := "https://git.example.com/git/git"
+		issueURL := url.IssueURL(-3)
+		if issueURL != expected {
+			t.Errorf(`got "%s" want "%s"`, issueURL, expected)
+		}
+	})
+}
+
+func TestPullrequestUrl(t *testing.T) {
+	withFakeEnv(t, func(tmpRoot string) {
+		withFakeGirDir(tmpRoot)
+
+		url, err := RemoteURL(tmpRoot, "")
+		if err != nil {
+			t.Errorf(`RemoteURL returned err "%s"`, err)
+		}
+
+		expected := "https://git.example.com/git/git/pulls"
+		pullrequestURL := url.PullrequestURL(0)
+		if pullrequestURL != expected {
+			t.Errorf(`got "%s" want "%s"`, pullrequestURL, expected)
+		}
+	})
+}
+
+func TestPullrequestUrlWithNum(t *testing.T) {
+	withFakeEnv(t, func(tmpRoot string) {
+		withFakeGirDir(tmpRoot)
+
+		url, err := RemoteURL(tmpRoot, "")
+		if err != nil {
+			t.Errorf(`RemoteURL returned err "%s"`, err)
+		}
+
+		expected := "https://git.example.com/git/git/pull/3"
+		pullrequestURL := url.PullrequestURL(3)
+		if pullrequestURL != expected {
+			t.Errorf(`got "%s" want "%s"`, pullrequestURL, expected)
+		}
+	})
+}
+
+func TestPullrequestUrlWithMinusNum(t *testing.T) {
+	withFakeEnv(t, func(tmpRoot string) {
+		withFakeGirDir(tmpRoot)
+
+		url, err := RemoteURL(tmpRoot, "")
+		if err != nil {
+			t.Errorf(`RemoteURL returned err "%s"`, err)
+		}
+
+		expected := "https://git.example.com/git/git"
+		pullrequestURL := url.PullrequestURL(-3)
+		if pullrequestURL != expected {
+			t.Errorf(`got "%s" want "%s"`, pullrequestURL, expected)
+		}
+	})
+}
