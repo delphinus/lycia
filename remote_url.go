@@ -9,51 +9,51 @@ import (
 
 var remoteUrlPattern = regexp.MustCompile(`(?m)^origin\s+(.*)\s+\(fetch\)$`)
 
-type githubURL struct {
+type remoteURL struct {
 	Ref string
 	*url.URL
 }
 
-func (g githubURL) SourceURL(ref string, path string, from int, to int) (sourceURL string) {
-	g.Ref = ref
-	sourceURL = g.String()
+func (r remoteURL) SourceURL(ref string, path string, from int, to int) (sourceURL string) {
+	r.Ref = ref
+	sourceURL = r.String()
 	if path != "" {
-		sourceURL = fmt.Sprintf("%s/blob/%s/%s", sourceURL, g.Ref, path)
+		sourceURL = fmt.Sprintf("%s/blob/%s/%s", sourceURL, r.Ref, path)
 		if from != 0 {
 			sourceURL = fmt.Sprintf("%s#L%d", sourceURL, from)
 			if to != 0 {
 				sourceURL = fmt.Sprintf("%s-L%d", sourceURL, to)
 			}
 		}
-	} else if g.Ref != "master" {
-		sourceURL = fmt.Sprintf("%s/tree/%s", g.Path, g.Ref)
+	} else if r.Ref != "master" {
+		sourceURL = fmt.Sprintf("%s/tree/%s", r.Path, r.Ref)
 	}
 	return
 }
 
-func (g githubURL) IssueURL(num int) (issueURL string) {
+func (r remoteURL) IssueURL(num int) (issueURL string) {
 	if num == 0 {
-		issueURL = g.String() + "/issues"
+		issueURL = r.String() + "/issues"
 	} else if num > 0 {
-		issueURL = fmt.Sprintf("%s/issues/%d", g.String(), num)
+		issueURL = fmt.Sprintf("%s/issues/%d", r.String(), num)
 	} else {
-		issueURL = g.String()
+		issueURL = r.String()
 	}
 	return
 }
 
-func (g githubURL) PullrequestURL(num int) (pullrequestURL string) {
+func (r remoteURL) PullrequestURL(num int) (pullrequestURL string) {
 	if num == 0 {
-		pullrequestURL = g.String() + "/pulls"
+		pullrequestURL = r.String() + "/pulls"
 	} else if num > 0 {
-		pullrequestURL = fmt.Sprintf("%s/pulls/%d", g.String(), num)
+		pullrequestURL = fmt.Sprintf("%s/pulls/%d", r.String(), num)
 	} else {
-		pullrequestURL = g.String()
+		pullrequestURL = r.String()
 	}
 	return
 }
 
-func RemoteURL(dir string) (parsed *githubURL, err error) {
+func RemoteURL(dir string) (parsed *remoteURL, err error) {
 	cmd := exec.Command("git", "remote", "-v")
 	cmd.Dir = dir
 	out, cmdErr := cmd.Output()
@@ -75,7 +75,7 @@ func RemoteURL(dir string) (parsed *githubURL, err error) {
 		gitUrl, _ := UrlMaker(rawUrl)
 		parsedURL, err := url.Parse(gitUrl.WebUrl)
 		if err == nil {
-			parsed = &githubURL{"", parsedURL}
+			parsed = &remoteURL{"", parsedURL}
 		}
 	}
 	return
