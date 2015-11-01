@@ -40,11 +40,9 @@ var commandOpen = cli.Command{
 	Name:    "open",
 	Aliases: []string{"o"},
 	Usage:   "Open github repository page",
-	Description: `
-Open URL link that can be identified by git-remote command.
-If you do not specify the path, you can see the top page.
-And if you specify, you can see the path on Web with highlighted lines.
-`,
+	Description: `Open URL link that can be identified by git-remote command.
+   If you do not specify the path, you can see the top page.
+   And if you specify, you can see the path on Web with highlighted lines.`,
 	Action: doOpen,
 	Flags:  openFlags,
 }
@@ -87,10 +85,8 @@ var commandIssue = cli.Command{
 	Name:    "issue",
 	Aliases: []string{"i"},
 	Usage:   "Open github issue page",
-	Description: `
-Open issue page that is specified by number in Args.
-If number is not specified, it will open the top page of issues.
-`,
+	Description: `Open issue page that is specified by number in Args.
+   If number is not specified, it will open the top page of issues.`,
 	Action: doIssue,
 	Flags:  issueFlags,
 }
@@ -115,10 +111,8 @@ var commandPullrequest = cli.Command{
 	Name:    "pullrequest",
 	Aliases: []string{"p", "pull"},
 	Usage:   "Open github pullrequest page",
-	Description: `
-Open pullrequest page that is specified by number in Args.
-If number is not specified, it will open the top page of pullrequests.
-`,
+	Description: `Open pullrequest page that is specified by number in Args.
+   If number is not specified, it will open the top page of pullrequests.`,
 	Action: doPullrequest,
 	Flags:  pullrequestFlags,
 }
