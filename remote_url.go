@@ -35,7 +35,7 @@ func (g githubURL) IssueURL(num int) (issueURL string) {
 	if num == 0 {
 		issueURL = g.String() + "/issues"
 	} else if num > 0 {
-		issueURL = fmt.Sprintf("%s/issue/%d", g.String(), num)
+		issueURL = fmt.Sprintf("%s/issues/%d", g.String(), num)
 	} else {
 		issueURL = g.String()
 	}
@@ -46,7 +46,7 @@ func (g githubURL) PullrequestURL(num int) (pullrequestURL string) {
 	if num == 0 {
 		pullrequestURL = g.String() + "/pulls"
 	} else if num > 0 {
-		pullrequestURL = fmt.Sprintf("%s/pull/%d", g.String(), num)
+		pullrequestURL = fmt.Sprintf("%s/pulls/%d", g.String(), num)
 	} else {
 		pullrequestURL = g.String()
 	}
