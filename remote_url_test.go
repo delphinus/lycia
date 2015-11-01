@@ -114,7 +114,24 @@ func TestRemoteUrlWithFrom(t *testing.T) {
 		}
 
 		expected := "https://git.example.com/git/git/blob/develop/some/deep/dir.go#L30"
-		if url != url && url.String() != expected {
+		if url != nil && url.String() != expected {
+			t.Errorf(`got "%s" want "%s"`, url, expected)
+		}
+	})
+}
+
+func TestRemoteUrlWithFromTo(t *testing.T) {
+	withFakeEnv(t, func(tmpRoot string) {
+		withFakeGirDir(tmpRoot)
+
+		path := "some/deep/dir.go"
+		url, err := RemoteURL(tmpRoot, "develop", path, 30, 32)
+		if err != nil {
+			t.Errorf(`RemoteURL returned err "%s"`, path)
+		}
+
+		expected := "https://git.example.com/git/git/blob/develop/some/deep/dir.go#L30-32"
+		if url != nil && url.String() != expected {
 			t.Errorf(`got "%s" want "%s"`, url, expected)
 		}
 	})

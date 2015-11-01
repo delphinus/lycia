@@ -36,9 +36,9 @@ func RemoteURL(dir string, ref string, path string, from int, to int) (parsedURL
 		if path != "" {
 			parsedURL.Path = fmt.Sprintf("%s/blob/%s/%s", parsedURL.Path, ref, path)
 			if from != 0 {
-				parsedURL.Path = fmt.Sprintf("%s#L%d", parsedURL.Path, from)
+				parsedURL.Fragment = fmt.Sprintf("L%d", from)
 				if to != 0 {
-					parsedURL.Path = fmt.Sprint("%s-%d", parsedURL.Path, to)
+					parsedURL.Fragment = fmt.Sprintf("%s-L%d", parsedURL.Fragment, to)
 				}
 			}
 		} else if ref != "master" {
