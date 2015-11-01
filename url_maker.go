@@ -11,12 +11,6 @@ var urlPattern = regexp.MustCompile(
 		`(?P<host>[^:/]+)[:/]` +
 		`(?P<path>.*?)(?:\.git)?$`)
 
-type GitUrlError string
-
-func (err GitUrlError) Error() string {
-	return string(err)
-}
-
 type GitUrl struct {
 	RawUrl   string
 	WebUrl   string

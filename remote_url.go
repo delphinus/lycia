@@ -61,14 +61,14 @@ func RemoteURL(dir string) (parsed *remoteURL, err error) {
 
 	if cmdErr != nil {
 		msg := fmt.Sprintf("can not exec 'git remove -v' : %s", cmdErr)
-		err = MyError(msg)
+		err = GitUrlError(msg)
 
 	} else if outStr == "" {
-		err = MyError("git remote is not defined")
+		err = GitUrlError("git remote is not defined")
 
 	} else if !remoteUrlPattern.MatchString(outStr) {
 		msg := fmt.Sprintf("unknown git remote string: %s", outStr)
-		err = MyError(msg)
+		err = GitUrlError(msg)
 
 	} else {
 		rawUrl := remoteUrlPattern.FindStringSubmatch(outStr)[1]
