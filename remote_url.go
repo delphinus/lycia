@@ -14,7 +14,8 @@ type githubURL struct {
 	*url.URL
 }
 
-func (g githubURL) SourceURL(path string, from int, to int) (sourceURL string) {
+func (g githubURL) SourceURL(ref string, path string, from int, to int) (sourceURL string) {
+	g.Ref = ref
 	sourceURL = g.String()
 	if path != "" {
 		sourceURL = fmt.Sprintf("%s/blob/%s/%s", sourceURL, g.Ref, path)
@@ -52,7 +53,7 @@ func (g githubURL) PullrequestURL(num int) (pullrequestURL string) {
 	return
 }
 
-func RemoteURL(dir string, ref string) (parsed *githubURL, err error) {
+func RemoteURL(dir string) (parsed *githubURL, err error) {
 	cmd := exec.Command("git", "remote", "-v")
 	cmd.Dir = dir
 	out, cmdErr := cmd.Output()
@@ -74,7 +75,7 @@ func RemoteURL(dir string, ref string) (parsed *githubURL, err error) {
 		gitUrl, _ := UrlMaker(rawUrl)
 		parsedURL, err := url.Parse(gitUrl.WebUrl)
 		if err == nil {
-			parsed = &githubURL{ref, parsedURL}
+			parsed = &githubURL{"", parsedURL}
 		}
 	}
 	return
