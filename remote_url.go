@@ -30,6 +30,27 @@ func (g githubURL) SourceURL(path string, from int, to int) (sourceURL string) {
 	return
 }
 
+func (g githubURL) IssueURL(num int) (issueURL string) {
+	if num == 0 {
+		issueURL = g.String() + "/issues"
+	} else if num > 0 {
+		issueURL = fmt.Sprintf("%s/issue/%d", g.String(), num)
+	} else {
+		issueURL = g.String()
+	}
+	return
+}
+
+func (g githubURL) PullrequestURL(num int) (pullrequestURL string) {
+	if num == 0 {
+		pullrequestURL = g.String() + "pulls"
+	} else if num > 0 {
+		pullrequestURL = fmt.Sprintf("%s/pull/%d", g.String(), num)
+	} else {
+		pullrequestURL = g.String()
+	}
+}
+
 func RemoteURL(dir string, ref string) (parsed *githubURL, err error) {
 	cmd := exec.Command("git", "remote", "-v")
 	cmd.Dir = dir
