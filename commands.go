@@ -5,10 +5,13 @@ import (
 	"github.com/codegangsta/cli"
 	"os"
 	"os/exec"
+	"strconv"
 )
 
 var Commands = []cli.Command{
 	commandOpen,
+	commandIssue,
+	//commandPullrequest,
 }
 
 var commandOpen = cli.Command{
@@ -62,6 +65,50 @@ func doOpen(c *cli.Context) {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
 		urlString := url.SourceURL(ref, argPath, from, to)
+		if print {
+			fmt.Print(urlString)
+		} else {
+			fmt.Printf("opening url: \"%s\"...\n", urlString)
+			cmd := exec.Command("open", urlString)
+			cmd.Run()
+		}
+	}
+}
+
+var commandIssue = cli.Command{
+	Name:    "issue",
+	Aliases: []string{"i"},
+	Usage:   "Open github issue page",
+	Description: `
+Open issue page that is specified by number in Args.
+If number is not specified, it will open the top page of issues.
+`,
+	Action: doIssue,
+	Flags:  issueFlags,
+}
+
+var issueFlags = []cli.Flag{
+	cli.StringFlag{
+		Name:  "root",
+		Value: ".",
+		Usage: "Specify root dir for repository",
+	},
+	cli.BoolFlag{
+		Name:  "print, p",
+		Usage: "Print URL to STDOUT",
+	},
+}
+
+func doIssue(c *cli.Context) {
+	argNumber, _ := strconv.Atoi(c.Args().Get(0))
+	root := c.String("root")
+	print := c.Bool("print")
+
+	url, err := RemoteURL(root)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
+	} else {
+		urlString := url.IssueURL(argNumber)
 		if print {
 			fmt.Print(urlString)
 		} else {
