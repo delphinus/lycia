@@ -3,17 +3,24 @@ package main
 import (
 	"fmt"
 	"github.com/codegangsta/cli"
+	"github.com/delphinus35/lycia/fssh"
 	"os"
 	"os/exec"
 	"strconv"
 )
 
-func openOrPrintURL(urlString string, doPrint bool) {
+func openOrPrintURL(c *cli.Context, urlString string, doPrint bool) {
 	if doPrint {
 		fmt.Print(urlString)
 	} else {
 		fmt.Printf("opening url: \"%s\"...\n", urlString)
-		cmd := exec.Command("open", urlString)
+		noFssh := c.Bool("no-fssh")
+		var cmd *exec.Cmd
+		if noFssh {
+			cmd = exec.Command("open", urlString)
+		} else {
+			cmd = fssh.Command("open", urlString)
+		}
 		cmd.Run()
 	}
 }
@@ -33,6 +40,10 @@ var commonFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "print, p",
 		Usage: "Print URL to STDOUT",
+	},
+	cli.BoolFlag{
+		Name:  "no-fssh",
+		Usage: "Do not use fssh execution",
 	},
 }
 
@@ -77,7 +88,7 @@ func doOpen(c *cli.Context) {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
 		urlString := url.SourceURL(ref, argPath, from, to)
-		openOrPrintURL(urlString, doPrint)
+		openOrPrintURL(c, urlString, doPrint)
 	}
 }
 
@@ -103,7 +114,7 @@ func doIssue(c *cli.Context) {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
 		urlString := url.IssueURL(argNumber)
-		openOrPrintURL(urlString, doPrint)
+		openOrPrintURL(c, urlString, doPrint)
 	}
 }
 
@@ -129,6 +140,6 @@ func doPullrequest(c *cli.Context) {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
 		urlString := url.PullrequestURL(argNumber)
-		openOrPrintURL(urlString, doPrint)
+		openOrPrintURL(c, urlString, doPrint)
 	}
 }
