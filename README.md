@@ -5,7 +5,7 @@ NAME:
    lycia - Open Github repository page
 
 USAGE:
-   ./lycia [global options] command [command options]
+   lycia [global options] command [command options]
 
    # examples
    lycia open
