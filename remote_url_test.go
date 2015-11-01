@@ -53,7 +53,7 @@ func TestRemoteUrlNoRemote(t *testing.T) {
 	})
 }
 
-func TestRemoteUrlWithRemote(t *testing.T) {
+func TestSourceUrl(t *testing.T) {
 	withFakeEnv(t, func(tmpRoot string) {
 		withFakeGirDir(tmpRoot)
 
@@ -70,7 +70,7 @@ func TestRemoteUrlWithRemote(t *testing.T) {
 	})
 }
 
-func TestRemoteUrlWithPath(t *testing.T) {
+func TestSourceUrlWithPath(t *testing.T) {
 	withFakeEnv(t, func(tmpRoot string) {
 		withFakeGirDir(tmpRoot)
 
@@ -88,14 +88,14 @@ func TestRemoteUrlWithPath(t *testing.T) {
 	})
 }
 
-func TestRemoteUrlWithPathAndRef(t *testing.T) {
+func TestSourceUrlWithPathAndRef(t *testing.T) {
 	withFakeEnv(t, func(tmpRoot string) {
 		withFakeGirDir(tmpRoot)
 
 		path := "some/deep/dir.go"
 		url, err := RemoteURL(tmpRoot, "develop")
 		if err != nil {
-			t.Errorf(`RemoteURL returned err "%s"`, path)
+			t.Errorf(`RemoteURL returned err "%s"`, err)
 		}
 
 		expected := "https://git.example.com/git/git/blob/develop/" + path
@@ -106,14 +106,14 @@ func TestRemoteUrlWithPathAndRef(t *testing.T) {
 	})
 }
 
-func TestRemoteUrlWithFrom(t *testing.T) {
+func TestSourceUrlWithFrom(t *testing.T) {
 	withFakeEnv(t, func(tmpRoot string) {
 		withFakeGirDir(tmpRoot)
 
 		path := "some/deep/dir.go"
 		url, err := RemoteURL(tmpRoot, "develop")
 		if err != nil {
-			t.Errorf(`RemoteURL returned err "%s"`, path)
+			t.Errorf(`RemoteURL returned err "%s"`, err)
 		}
 
 		expected := "https://git.example.com/git/git/blob/develop/some/deep/dir.go#L30"
@@ -124,14 +124,14 @@ func TestRemoteUrlWithFrom(t *testing.T) {
 	})
 }
 
-func TestRemoteUrlWithFromTo(t *testing.T) {
+func TestSourceUrlWithFromTo(t *testing.T) {
 	withFakeEnv(t, func(tmpRoot string) {
 		withFakeGirDir(tmpRoot)
 
 		path := "some/deep/dir.go"
 		url, err := RemoteURL(tmpRoot, "develop")
 		if err != nil {
-			t.Errorf(`RemoteURL returned err "%s"`, path)
+			t.Errorf(`RemoteURL returned err "%s"`, err)
 		}
 
 		expected := "https://git.example.com/git/git/blob/develop/some/deep/dir.go#L30-L32"
