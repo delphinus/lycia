@@ -219,7 +219,7 @@ func TestPullrequestUrlWithNum(t *testing.T) {
 			t.Errorf(`RemoteURL returned err "%s"`, err)
 		}
 
-		expected := "https://git.example.com/git/git/pulls/3"
+		expected := "https://git.example.com/git/git/pull/3"
 		pullrequestURL := url.PullrequestURL(3)
 		if pullrequestURL != expected {
 			t.Errorf(`got "%s" want "%s"`, pullrequestURL, expected)

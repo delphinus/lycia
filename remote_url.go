@@ -46,7 +46,7 @@ func (r remoteURL) PullrequestURL(num int) (pullrequestURL string) {
 	if num == 0 {
 		pullrequestURL = r.String() + "/pulls"
 	} else if num > 0 {
-		pullrequestURL = fmt.Sprintf("%s/pulls/%d", r.String(), num)
+		pullrequestURL = fmt.Sprintf("%s/pull/%d", r.String(), num)
 	} else {
 		pullrequestURL = r.String()
 	}
