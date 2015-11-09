@@ -29,7 +29,7 @@ USAGE:
    lycia issue 40
      - open issue #40
 
-   lycia pullrequest #50
+   lycia pullrequest 50
      - open PR #50
 
 VERSION:
