@@ -120,7 +120,7 @@ func doIssue(c *cli.Context) {
 
 var commandPullrequest = cli.Command{
 	Name:    "pullrequest",
-	Aliases: []string{"p", "pull"},
+	Aliases: []string{"p", "pr", "pull"},
 	Usage:   "Open github pullrequest page",
 	Description: `Open pullrequest page that is specified by number in Args.
    If number is not specified, it will open the top page of pullrequests.`,
