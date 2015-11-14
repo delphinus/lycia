@@ -61,6 +61,27 @@ type PullRequestItem struct {
 	PatchUrl string `json:"patch_url"`
 }
 
+type Authorizations struct {
+	Id             int         `json:"id"`
+	Url            string      `json:"url"`
+	Scopes         []string    `json:"scopes"`
+	Token          string      `json:"token"`
+	TokenLastEight string      `json:"token_last_eight"`
+	HashedToken    string      `json:"hashed_token"`
+	App            App         `json:"app"`
+	Note           string      `json:"note"`
+	NoteUrl        string      `json:"note_url"`
+	UpdatedAt      null.String `json:"updated_at"`
+	CreatedAt      string      `json:"created_at"`
+	Fingerprint    string      `json:"fingerprint"`
+}
+
+type App struct {
+	Url      string `json:"url"`
+	Name     string `json:"name"`
+	ClientId string `json:"client_id"`
+}
+
 type SiteConfig struct {
 	Host        string `json:"host"`
 	AccessToken string `json:"access_token"`
