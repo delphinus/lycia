@@ -6,4 +6,5 @@ go:
   - tip
 install:
   - go get github.com/codegangsta/cli
+  - go get gopkg.in/guregu/null.v3
 script: go test -v ./...
