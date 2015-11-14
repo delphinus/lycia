@@ -154,7 +154,7 @@ func doPullrequest(c *cli.Context) {
 		return
 	}
 
-	repo := github.NewRepository(remoteURL)
+	repo := github.Repository(remoteURL.ToURL())
 	prURL, err := repo.PullrequestURL(branch)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "pullrequest URL not found: %s\n", err)

@@ -10,7 +10,7 @@ type repository struct {
 	URL url.URL
 }
 
-func NewRepository(repoURL url.URL) *repository {
+func Repository(repoURL url.URL) *repository {
 	return &repository{repoURL}
 }
 
