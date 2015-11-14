@@ -162,6 +162,10 @@ func doPullrequest(c *cli.Context) {
 		return
 	}
 
+	if branch == "" {
+		branch = DetectCurrentBranch(root)
+	}
+
 	prURL, err := repo.PullrequestUrlWithBranch(branch)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "pullrequest URL not found: %s\n", err)
