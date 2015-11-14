@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/codegangsta/cli"
 	"github.com/delphinus35/lycia/fssh"
+	"github.com/delphinus35/lycia/github"
 	"os"
 	"os/exec"
 	"strconv"
@@ -128,18 +129,36 @@ var commandPullrequest = cli.Command{
 	Flags:  pullrequestFlags,
 }
 
-var pullrequestFlags = commonFlags
+var pullrequestFlags = append(commonFlags,
+	cli.StringFlag{
+		Name:  "branch",
+		Value: "",
+		Usage: "Specify head branch for pullrequest to open",
+	},
+)
 
 func doPullrequest(c *cli.Context) {
 	argNumber, _ := strconv.Atoi(c.Args().Get(0))
 	root := c.String("root")
 	doPrint := c.Bool("print")
+	branch := c.String("branch")
 
 	remoteURL, err := RemoteURL(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
-	} else {
-		urlString := url.PullrequestURL(argNumber)
+		return
+	}
+	if branch == "" {
+		urlString := remoteURL.PullrequestURL(argNumber)
 		openOrPrintURL(c, urlString, doPrint)
+		return
+	}
+
+	repo := github.NewRepository(remoteURL)
+	prURL, err := repo.PullrequestURL(branch)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "pullrequest URL not found: %s\n", err)
+	} else {
+		openOrPrintURL(c, prURL.String(), doPrint)
 	}
 }
