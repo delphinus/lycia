@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	. "github.com/delphinus35/lycia/error"
 	"net/url"
 	"os/exec"
 	"regexp"
@@ -61,14 +62,14 @@ func RemoteURL(dir string) (parsed *remoteURL, err error) {
 
 	if cmdErr != nil {
 		msg := fmt.Sprintf("can not exec 'git remove -v' : %s", cmdErr)
-		err = GitUrlError(msg)
+		err = LyciaError(msg)
 
 	} else if outStr == "" {
-		err = GitUrlError("git remote is not defined")
+		err = LyciaError("git remote is not defined")
 
 	} else if !remoteUrlPattern.MatchString(outStr) {
 		msg := fmt.Sprintf("unknown git remote string: %s", outStr)
-		err = GitUrlError(msg)
+		err = LyciaError(msg)
 
 	} else {
 		rawUrl := remoteUrlPattern.FindStringSubmatch(outStr)[1]
