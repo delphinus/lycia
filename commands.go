@@ -135,6 +135,10 @@ var pullrequestFlags = append(commonFlags,
 		Value: "",
 		Usage: "Specify head branch for pullrequest to open",
 	},
+	cli.BoolFlag{
+		Name:  "top, t",
+		Usage: "Open top page for pullrequests",
+	},
 )
 
 func doPullrequest(c *cli.Context) {
@@ -142,6 +146,7 @@ func doPullrequest(c *cli.Context) {
 	root := c.String("root")
 	doPrint := c.Bool("print")
 	branch := c.String("branch")
+	top := c.Bool("top")
 
 	remoteURL, err := RemoteURL(root)
 	if err != nil {
@@ -149,7 +154,7 @@ func doPullrequest(c *cli.Context) {
 		return
 	}
 
-	if argNumber != 0 {
+	if argNumber > 0 || top {
 		urlString := remoteURL.PullrequestURL(argNumber)
 		openOrPrintURL(c, urlString, doPrint)
 		return
