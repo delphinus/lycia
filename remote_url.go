@@ -15,6 +15,14 @@ type remoteURL struct {
 	*url.URL
 }
 
+func (r remoteURL) ToURL() url.URL {
+	return url.URL{
+		Scheme: r.Scheme,
+		Host:   r.Host,
+		Path:   r.Path,
+	}
+}
+
 func (r remoteURL) SourceURL(ref string, path string, from int, to int) (sourceURL string) {
 	r.Ref = ref
 	sourceURL = r.String()
