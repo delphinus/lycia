@@ -46,7 +46,7 @@ func (repo *repository) PullrequestURL(branch string) (prURL *url.URL, err error
 
 	items := searchIssue.Items
 	if len(items) == 0 {
-		err = LyciaError("pullrequest not found")
+		err = LyciaError(fmt.Sprintf("pullrequest not found for the branch: %s", branch))
 		return
 	}
 
