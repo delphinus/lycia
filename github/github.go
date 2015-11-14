@@ -32,7 +32,7 @@ func (repo *repository) PullrequestUrlWithNumber(num int) (pullrequestURL string
 func (repo *repository) PullrequestUrlWithBranch(branch string) (prURL *url.URL, err error) {
 	values := url.Values{}
 	repoPath := strings.TrimLeft(repo.URL.Path, "/")
-	queryString := fmt.Sprintf("repo:%s type:pr is:open head:%s", repoPath, branch)
+	queryString := fmt.Sprintf("repo:%s type:pr head:%s", repoPath, branch)
 	values.Add("q", queryString)
 
 	searchURL := fmt.Sprintf("https://api.github.com/search/issues?%s", values.Encode())
