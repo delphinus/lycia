@@ -131,7 +131,7 @@ var commandPullrequest = cli.Command{
 
 var pullrequestFlags = append(commonFlags,
 	cli.StringFlag{
-		Name:  "branch",
+		Name:  "branch, b",
 		Value: "",
 		Usage: "Specify head branch for pullrequest to open",
 	},
