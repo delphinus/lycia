@@ -51,17 +51,6 @@ func (r remoteURL) IssueURL(num int) (issueURL string) {
 	return
 }
 
-func (r remoteURL) PullrequestURL(num int) (pullrequestURL string) {
-	if num == 0 {
-		pullrequestURL = r.String() + "/pulls"
-	} else if num > 0 {
-		pullrequestURL = fmt.Sprintf("%s/pull/%d", r.String(), num)
-	} else {
-		pullrequestURL = r.String()
-	}
-	return
-}
-
 func RemoteURL(dir string) (parsed *remoteURL, err error) {
 	cmd := exec.Command("git", "remote", "-v")
 	cmd.Dir = dir

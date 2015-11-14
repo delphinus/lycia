@@ -18,7 +18,18 @@ func Repository(repoURL url.URL) *repository {
 	return &repository{repoURL}
 }
 
-func (repo *repository) PullrequestURL(branch string) (prURL *url.URL, err error) {
+func (repo *repository) PullrequestUrlWithNumber(num int) (pullrequestURL string) {
+	if num == 0 {
+		pullrequestURL = repo.URL.String() + "/pulls"
+	} else if num > 0 {
+		pullrequestURL = fmt.Sprintf("%s/pull/%d", repo.URL.String(), num)
+	} else {
+		pullrequestURL = repo.URL.String()
+	}
+	return
+}
+
+func (repo *repository) PullrequestUrlWithBranch(branch string) (prURL *url.URL, err error) {
 	values := url.Values{}
 	repoPath := strings.TrimLeft(repo.URL.Path, "/")
 	queryString := fmt.Sprintf("repo:%s type:pr is:open head:%s", repoPath, branch)
