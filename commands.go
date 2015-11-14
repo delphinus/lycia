@@ -83,11 +83,11 @@ func doOpen(c *cli.Context) {
 	to := c.Int("to")
 	doPrint := c.Bool("print")
 
-	url, err := RemoteURL(root)
+	remoteURL, err := RemoteURL(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
-		urlString := url.SourceURL(ref, argPath, from, to)
+		urlString := remoteURL.SourceURL(ref, argPath, from, to)
 		openOrPrintURL(c, urlString, doPrint)
 	}
 }
@@ -109,11 +109,11 @@ func doIssue(c *cli.Context) {
 	root := c.String("root")
 	doPrint := c.Bool("print")
 
-	url, err := RemoteURL(root)
+	remoteURL, err := RemoteURL(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
-		urlString := url.IssueURL(argNumber)
+		urlString := remoteURL.IssueURL(argNumber)
 		openOrPrintURL(c, urlString, doPrint)
 	}
 }
@@ -135,7 +135,7 @@ func doPullrequest(c *cli.Context) {
 	root := c.String("root")
 	doPrint := c.Bool("print")
 
-	url, err := RemoteURL(root)
+	remoteURL, err := RemoteURL(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
