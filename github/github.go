@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	. "github.com/delphinus35/lycia/error"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -44,14 +43,10 @@ func (repo *repository) PullrequestUrlWithBranch(branch string) (prURL *url.URL,
 
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		err = LyciaError("failed to read body: " + searchURL)
-		return
-	}
+	decoder := json.NewDecoder(res.Body)
 
 	var searchIssue SearchIssue
-	if err = json.Unmarshal(body, &searchIssue); err != nil {
+	if err = decoder.Decode(&searchIssue); err != nil {
 		return
 	}
 
