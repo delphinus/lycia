@@ -60,3 +60,8 @@ type PullRequestItem struct {
 	DiffUrl  string `json:"diff_url"`
 	PatchUrl string `json:"patch_url"`
 }
+
+type SiteConfig struct {
+	Host        string `json:"host"`
+	AccessToken string `json:"access_token"`
+}
