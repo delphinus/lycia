@@ -38,7 +38,8 @@ func withFakeConfig(tmpRoot string) {
 func TestInitConfigPathNotFound(t *testing.T) {
 	withFakeEnv(t, func(tmpRoot string) {
 		ConfigPath = "/path/not/found"
-		err := InitConfigPath()
+		c := make(Config)
+		err := c.InitConfigPath()
 
 		expected := "access error to config path"
 		if ok, _ := regexp.MatchString(expected, err.Error()); !ok {
@@ -51,7 +52,8 @@ func TestInitConfigPath(t *testing.T) {
 	withFakeEnv(t, func(tmpRoot string) {
 		withFakeConfig(tmpRoot)
 
-		c, err := LoadConfig()
+		c := make(Config)
+		err := c.LoadConfig()
 		if err != nil {
 			t.Errorf(`err found in LoadConfig(): %s`, err)
 		}

@@ -13,7 +13,7 @@ var ConfigPath = os.Getenv("HOME") + "/.config/lycia/config.json"
 
 type Config map[string]SiteConfig
 
-func InitConfigPath() (err error) {
+func (c Config) InitConfigPath() (err error) {
 	dir, _ := path.Split(ConfigPath)
 	stat, err := os.Stat(dir)
 	if err != nil {
@@ -30,8 +30,8 @@ func InitConfigPath() (err error) {
 	return
 }
 
-func LoadConfig() (c Config, err error) {
-	InitConfigPath()
+func (c Config) LoadConfig() (err error) {
+	c.InitConfigPath()
 
 	// If stat cannot be calculated, ConfigPath does not exist. This is not an error.
 	if _, err = os.Stat(ConfigPath); err != nil {
@@ -52,7 +52,6 @@ func LoadConfig() (c Config, err error) {
 		return
 	}
 
-	c = make(Config)
 	for _, siteConfig := range rawConfig {
 		c[siteConfig.Host] = siteConfig
 	}
