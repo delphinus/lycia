@@ -4,7 +4,7 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
-type SearchIssue struct {
+type SearchIssues struct {
 	TotalCount        int         `json:"total_count"`
 	IncompleteResults bool        `json:"incomplete_results"`
 	Items             []IssueItem `json:"items"`

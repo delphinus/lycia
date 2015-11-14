@@ -45,12 +45,12 @@ func (repo *repository) PullrequestUrlWithBranch(branch string) (prURL *url.URL,
 
 	decoder := json.NewDecoder(res.Body)
 
-	var searchIssue SearchIssue
-	if err = decoder.Decode(&searchIssue); err != nil {
+	var searchIssues SearchIssues
+	if err = decoder.Decode(&searchIssues); err != nil {
 		return
 	}
 
-	items := searchIssue.Items
+	items := searchIssues.Items
 	if len(items) == 0 {
 		err = LyciaError(fmt.Sprintf("pullrequest not found for the branch: %s", branch))
 		return
