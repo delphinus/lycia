@@ -11,10 +11,10 @@ import (
 )
 
 type repository struct {
-	URL url.URL
+	URL *url.URL
 }
 
-func Repository(repoURL url.URL) *repository {
+func Repository(repoURL *url.URL) *repository {
 	return &repository{repoURL}
 }
 

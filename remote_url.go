@@ -15,8 +15,8 @@ type remoteURL struct {
 	*url.URL
 }
 
-func (r remoteURL) ToURL() url.URL {
-	return url.URL{
+func (r remoteURL) ToURL() *url.URL {
+	return &url.URL{
 		Scheme: r.Scheme,
 		Host:   r.Host,
 		Path:   r.Path,
