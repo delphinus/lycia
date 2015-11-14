@@ -148,7 +148,8 @@ func doPullrequest(c *cli.Context) {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 		return
 	}
-	if branch == "" {
+
+	if argNumber != 0 {
 		urlString := remoteURL.PullrequestURL(argNumber)
 		openOrPrintURL(c, urlString, doPrint)
 		return
