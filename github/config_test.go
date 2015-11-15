@@ -53,7 +53,7 @@ func TestInitConfigPath(t *testing.T) {
 		withFakeConfig(tmpRoot)
 
 		c := make(Config)
-		err := c.LoadConfig()
+		err := c.Load()
 		if err != nil {
 			t.Errorf(`err found in LoadConfig(): %s`, err)
 		}

@@ -26,7 +26,7 @@ func (c Config) InitConfigPath() (err error) {
 	return
 }
 
-func (c Config) LoadConfig() (err error) {
+func (c Config) Load() (err error) {
 	err = c.InitConfigPath()
 	if err != nil {
 		return
@@ -58,7 +58,7 @@ func (c Config) LoadConfig() (err error) {
 	return
 }
 
-func (c Config) SaveConfig() (err error) {
+func (c Config) Save() (err error) {
 	err = c.InitConfigPath()
 	if err != nil {
 		return

@@ -18,7 +18,7 @@ type repository struct {
 
 func Repository(repoURL *url.URL) *repository {
 	config := make(Config)
-	config.LoadConfig()
+	config.Load()
 	return &repository{repoURL, config}
 }
 
@@ -168,7 +168,7 @@ func (repo *repository) DetectApiRootAndSetAccessToken(values url.Values) (apiRo
 	}
 
 	repo.Config[repo.URL.Host] = sc
-	err = repo.Config.SaveConfig()
+	err = repo.Config.Save()
 	if err != nil {
 		err = LyciaError("failed to save config: " + err.Error())
 		return
