@@ -6,5 +6,7 @@ go:
   - tip
 install:
   - go get github.com/codegangsta/cli
+  - go get github.com/fatih/color
+  - go get golang.org/x/crypto/ssh/terminal
   - go get gopkg.in/guregu/null.v3
 script: go test -v ./...
