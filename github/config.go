@@ -6,28 +6,14 @@ import (
 	. "github.com/delphinus35/lycia/error"
 	"io/ioutil"
 	"os"
-	"path"
 )
 
 var ConfigPath = os.Getenv("HOME") + "/.config/lycia/config.json"
 
 type Config map[string]SiteConfig
 
-func (c Config) InitConfigPath() (err error) {
-	dir, _ := path.Split(ConfigPath)
-	stat, err := os.Stat(dir)
-	if err != nil || !stat.IsDir() {
-		err = os.MkdirAll(dir, 0755)
-		if err != nil {
-			err = LyciaError(fmt.Sprintf("cannot mkdir: '%s'", dir))
-			return
-		}
-	}
-	return
-}
-
 func (c Config) Load() (err error) {
-	err = c.InitConfigPath()
+	err = InitPath(ConfigPath)
 	if err != nil {
 		return
 	}
@@ -59,7 +45,7 @@ func (c Config) Load() (err error) {
 }
 
 func (c Config) Save() (err error) {
-	err = c.InitConfigPath()
+	err = InitPath(ConfigPath)
 	if err != nil {
 		return
 	}

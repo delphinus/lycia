@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"regexp"
 	"testing"
 )
 
@@ -35,20 +34,7 @@ func withFakeConfig(tmpRoot string) {
 	]`)
 }
 
-func TestInitConfigPathNotFound(t *testing.T) {
-	withFakeEnv(t, func(tmpRoot string) {
-		ConfigPath = "/path/not/found"
-		c := make(Config)
-		err := c.InitConfigPath()
-
-		expected := "access error to config path"
-		if ok, _ := regexp.MatchString(expected, err.Error()); !ok {
-			t.Errorf(`got "%s" want "%s"`, err, expected)
-		}
-	})
-}
-
-func TestInitConfigPath(t *testing.T) {
+func TestConfigLoad(t *testing.T) {
 	withFakeEnv(t, func(tmpRoot string) {
 		withFakeConfig(tmpRoot)
 
