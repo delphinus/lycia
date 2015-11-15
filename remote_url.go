@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	. "github.com/delphinus35/lycia/error"
 	"net/url"
 	"os/exec"
 	"regexp"
@@ -12,6 +13,14 @@ var remoteUrlPattern = regexp.MustCompile(`(?m)^origin\s+(.*)\s+\(fetch\)$`)
 type remoteURL struct {
 	Ref string
 	*url.URL
+}
+
+func (r remoteURL) ToURL() *url.URL {
+	return &url.URL{
+		Scheme: r.Scheme,
+		Host:   r.Host,
+		Path:   r.Path,
+	}
 }
 
 func (r remoteURL) SourceURL(ref string, path string, from int, to int) (sourceURL string) {
@@ -42,17 +51,6 @@ func (r remoteURL) IssueURL(num int) (issueURL string) {
 	return
 }
 
-func (r remoteURL) PullrequestURL(num int) (pullrequestURL string) {
-	if num == 0 {
-		pullrequestURL = r.String() + "/pulls"
-	} else if num > 0 {
-		pullrequestURL = fmt.Sprintf("%s/pull/%d", r.String(), num)
-	} else {
-		pullrequestURL = r.String()
-	}
-	return
-}
-
 func RemoteURL(dir string) (parsed *remoteURL, err error) {
 	cmd := exec.Command("git", "remote", "-v")
 	cmd.Dir = dir
@@ -61,14 +59,14 @@ func RemoteURL(dir string) (parsed *remoteURL, err error) {
 
 	if cmdErr != nil {
 		msg := fmt.Sprintf("can not exec 'git remove -v' : %s", cmdErr)
-		err = GitUrlError(msg)
+		err = LyciaError(msg)
 
 	} else if outStr == "" {
-		err = GitUrlError("git remote is not defined")
+		err = LyciaError("git remote is not defined")
 
 	} else if !remoteUrlPattern.MatchString(outStr) {
 		msg := fmt.Sprintf("unknown git remote string: %s", outStr)
-		err = GitUrlError(msg)
+		err = LyciaError(msg)
 
 	} else {
 		rawUrl := remoteUrlPattern.FindStringSubmatch(outStr)[1]

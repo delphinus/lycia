@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/codegangsta/cli"
 	"github.com/delphinus35/lycia/fssh"
+	"github.com/delphinus35/lycia/github"
 	"os"
 	"os/exec"
 	"strconv"
@@ -83,11 +84,11 @@ func doOpen(c *cli.Context) {
 	to := c.Int("to")
 	doPrint := c.Bool("print")
 
-	url, err := RemoteURL(root)
+	remoteURL, err := RemoteURL(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
-		urlString := url.SourceURL(ref, argPath, from, to)
+		urlString := remoteURL.SourceURL(ref, argPath, from, to)
 		openOrPrintURL(c, urlString, doPrint)
 	}
 }
@@ -109,11 +110,11 @@ func doIssue(c *cli.Context) {
 	root := c.String("root")
 	doPrint := c.Bool("print")
 
-	url, err := RemoteURL(root)
+	remoteURL, err := RemoteURL(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 	} else {
-		urlString := url.IssueURL(argNumber)
+		urlString := remoteURL.IssueURL(argNumber)
 		openOrPrintURL(c, urlString, doPrint)
 	}
 }
@@ -128,18 +129,47 @@ var commandPullrequest = cli.Command{
 	Flags:  pullrequestFlags,
 }
 
-var pullrequestFlags = commonFlags
+var pullrequestFlags = append(commonFlags,
+	cli.StringFlag{
+		Name:  "branch, b",
+		Value: "",
+		Usage: "Specify head branch for pullrequest to open",
+	},
+	cli.BoolFlag{
+		Name:  "top, t",
+		Usage: "Open top page for pullrequests",
+	},
+)
 
 func doPullrequest(c *cli.Context) {
 	argNumber, _ := strconv.Atoi(c.Args().Get(0))
 	root := c.String("root")
 	doPrint := c.Bool("print")
+	branch := c.String("branch")
+	top := c.Bool("top")
 
-	url, err := RemoteURL(root)
+	remoteURL, err := RemoteURL(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
-	} else {
-		urlString := url.PullrequestURL(argNumber)
+		return
+	}
+
+	repo := github.Repository(remoteURL.ToURL())
+
+	if argNumber > 0 || top {
+		urlString := repo.PullrequestUrlWithNumber(argNumber)
 		openOrPrintURL(c, urlString, doPrint)
+		return
+	}
+
+	if branch == "" {
+		branch = DetectCurrentBranch(root)
+	}
+
+	prURL, err := repo.PullrequestUrlWithBranch(branch)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "pullrequest URL not found: %s\n", err)
+	} else {
+		openOrPrintURL(c, prURL.String(), doPrint)
 	}
 }
