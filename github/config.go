@@ -57,3 +57,27 @@ func (c Config) LoadConfig() (err error) {
 
 	return
 }
+
+func (c Config) SaveConfig() (err error) {
+	err = c.InitConfigPath()
+	if err != nil {
+		return
+	}
+
+	var rawConfig []SiteConfig
+	for _, config := range c {
+		rawConfig = append(rawConfig, config)
+	}
+
+	byt, err := json.Marshal(rawConfig)
+	if err != nil {
+		err = LyciaError(fmt.Sprintf("cannot encode config to JSON: %s", err))
+		return
+	}
+
+	err = ioutil.WriteFile(ConfigPath, byt, 0644)
+	if err != nil {
+		err = LyciaError(fmt.Sprintf("cannot write config to file '%s': %s", ConfigPath, err))
+	}
+	return
+}
