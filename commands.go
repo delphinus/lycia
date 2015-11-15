@@ -87,6 +87,7 @@ func doOpen(c *cli.Context) {
 	remoteURL, err := RemoteURL(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
+		os.Exit(1)
 	} else {
 		urlString := remoteURL.SourceURL(ref, argPath, from, to)
 		openOrPrintURL(c, urlString, doPrint)
@@ -113,6 +114,7 @@ func doIssue(c *cli.Context) {
 	remoteURL, err := RemoteURL(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
+		os.Exit(1)
 	} else {
 		urlString := remoteURL.IssueURL(argNumber)
 		openOrPrintURL(c, urlString, doPrint)
@@ -139,6 +141,10 @@ var pullrequestFlags = append(commonFlags,
 		Name:  "top, t",
 		Usage: "Open top page for pullrequests",
 	},
+	cli.BoolFlag{
+		Name:  "force, f",
+		Usage: "Fetch info without cache",
+	},
 )
 
 func doPullrequest(c *cli.Context) {
@@ -147,14 +153,20 @@ func doPullrequest(c *cli.Context) {
 	doPrint := c.Bool("print")
 	branch := c.String("branch")
 	top := c.Bool("top")
+	force := c.Bool("force")
 
 	remoteURL, err := RemoteURL(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
-		return
+		os.Exit(1)
 	}
 
-	repo := github.Repository(remoteURL.ToURL())
+	repo, err := github.Repository(remoteURL.ToURL())
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "cannot detect repository: %s", err)
+		os.Exit(1)
+	}
 
 	if argNumber > 0 || top {
 		urlString := repo.PullrequestUrlWithNumber(argNumber)
@@ -166,9 +178,10 @@ func doPullrequest(c *cli.Context) {
 		branch = DetectCurrentBranch(root)
 	}
 
-	prURL, err := repo.PullrequestUrlWithBranch(branch)
+	prURL, err := repo.PullrequestUrlWithBranch(branch, force)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "pullrequest URL not found: %s\n", err)
+		os.Exit(1)
 	} else {
 		openOrPrintURL(c, prURL.String(), doPrint)
 	}

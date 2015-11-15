@@ -15,6 +15,7 @@ func withFakeEnv(t *testing.T, block func(string)) {
 	defer func() { os.RemoveAll(tmpRoot) }()
 
 	ConfigPath = tmpRoot + "/.config/lycia/config.json"
+	CachePath = tmpRoot + "/.config/lycia/cache.json"
 
 	block(tmpRoot)
 }

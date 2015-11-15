@@ -14,12 +14,22 @@ import (
 type repository struct {
 	URL    *url.URL
 	Config Config
+	Cache  Cache
 }
 
-func Repository(repoURL *url.URL) *repository {
+func Repository(repoURL *url.URL) (repo *repository, err error) {
 	config := make(Config)
-	config.Load()
-	return &repository{repoURL, config}
+	err = config.Load()
+	if err != nil {
+		return
+	}
+	cache := make(Cache)
+	err = cache.LoadCache()
+	if err != nil {
+		return
+	}
+	repo = &repository{repoURL, config, cache}
+	return
 }
 
 func (repo *repository) PullrequestUrlWithNumber(num int) (pullrequestURL string) {
@@ -33,7 +43,14 @@ func (repo *repository) PullrequestUrlWithNumber(num int) (pullrequestURL string
 	return
 }
 
-func (repo *repository) PullrequestUrlWithBranch(branch string) (prURL *url.URL, err error) {
+func (repo *repository) PullrequestUrlWithBranch(branch string, force bool) (prURL *url.URL, err error) {
+	if !force {
+		prURL, err = repo.GetPrUrlFromCache(branch)
+		if err == nil {
+			return
+		}
+	}
+
 	values := url.Values{}
 	repoPath := strings.TrimLeft(repo.URL.Path, "/")
 	queryString := fmt.Sprintf("repo:%s type:pr head:%s", repoPath, branch)
@@ -70,7 +87,14 @@ func (repo *repository) PullrequestUrlWithBranch(branch string) (prURL *url.URL,
 	prURL, err = url.Parse(items[0].HtmlUrl)
 	if err != nil {
 		err = LyciaError(fmt.Sprintf("html_url is invalid: %s", items[0].HtmlUrl))
+		return
 	}
+
+	err = repo.SavePrUrlToCache(branch, prURL)
+	if err != nil {
+		err = LyciaError(fmt.Sprintf("cache cannot be saved: %s", err))
+	}
+
 	return
 }
 
@@ -181,5 +205,32 @@ func (repo *repository) DetectApiRootAndSetAccessToken(values url.Values) (apiRo
 func (repo *repository) NewPostRequest(username string, password string, urlStr string, body string) (req *http.Request, err error) {
 	req, err = http.NewRequest("POST", urlStr, bytes.NewBufferString(body))
 	req.SetBasicAuth(username, password)
+	return
+}
+
+func (repo *repository) GetPrUrlFromCache(branch string) (prURL *url.URL, err error) {
+	branchToUrl, ok := repo.Cache[repo.URL.String()]
+	if !ok {
+		err = LyciaError("cache not found")
+		return
+	}
+	if prUrlStr, ok := branchToUrl[branch]; ok {
+		prURL, err = url.Parse(prUrlStr)
+	} else {
+		err = LyciaError("cache not found")
+	}
+	return
+}
+
+func (repo *repository) SavePrUrlToCache(branch string, prURL *url.URL) (err error) {
+	var branchToUrl BranchToUrl
+	if repo.Cache[repo.URL.String()] == nil {
+		branchToUrl = make(BranchToUrl)
+		repo.Cache[repo.URL.String()] = branchToUrl
+	} else {
+		branchToUrl = repo.Cache[repo.URL.String()]
+	}
+	branchToUrl[branch] = prURL.String()
+	err = repo.Cache.SaveCache()
 	return
 }

@@ -87,3 +87,9 @@ type SiteConfig struct {
 	ApiRoot     string `json:"api_root"`
 	AccessToken string `json:"access_token"`
 }
+
+type PrUrlCache struct {
+	RepositoryUrl string `json:"repository_url"`
+	Branch        string `json:"branch"`
+	PrUrl         string `json:"pr_url"`
+}
