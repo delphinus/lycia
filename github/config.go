@@ -16,11 +16,7 @@ type Config map[string]SiteConfig
 func (c Config) InitConfigPath() (err error) {
 	dir, _ := path.Split(ConfigPath)
 	stat, err := os.Stat(dir)
-	if err != nil {
-		err = LyciaError(fmt.Sprintf("access error to config path '%s': %s", ConfigPath, err))
-		return
-	}
-	if !stat.IsDir() {
+	if err != nil || !stat.IsDir() {
 		err = os.MkdirAll(dir, 0755)
 		if err != nil {
 			err = LyciaError(fmt.Sprintf("cannot mkdir: '%s'", dir))
@@ -31,7 +27,10 @@ func (c Config) InitConfigPath() (err error) {
 }
 
 func (c Config) LoadConfig() (err error) {
-	c.InitConfigPath()
+	err = c.InitConfigPath()
+	if err != nil {
+		return
+	}
 
 	// If stat cannot be calculated, ConfigPath does not exist. This is not an error.
 	if _, err = os.Stat(ConfigPath); err != nil {
