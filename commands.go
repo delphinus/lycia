@@ -141,6 +141,10 @@ var pullrequestFlags = append(commonFlags,
 		Name:  "top, t",
 		Usage: "Open top page for pullrequests",
 	},
+	cli.BoolFlag{
+		Name:  "force, f",
+		Usage: "Fetch info without cache",
+	},
 )
 
 func doPullrequest(c *cli.Context) {
@@ -149,6 +153,7 @@ func doPullrequest(c *cli.Context) {
 	doPrint := c.Bool("print")
 	branch := c.String("branch")
 	top := c.Bool("top")
+	force := c.Bool("force")
 
 	remoteURL, err := RemoteURL(root)
 	if err != nil {
@@ -173,7 +178,7 @@ func doPullrequest(c *cli.Context) {
 		branch = DetectCurrentBranch(root)
 	}
 
-	prURL, err := repo.PullrequestUrlWithBranch(branch)
+	prURL, err := repo.PullrequestUrlWithBranch(branch, force)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "pullrequest URL not found: %s\n", err)
 		os.Exit(1)
