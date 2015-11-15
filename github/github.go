@@ -16,10 +16,14 @@ type repository struct {
 	Config Config
 }
 
-func Repository(repoURL *url.URL) *repository {
+func Repository(repoURL *url.URL) (repo *repository, err error) {
 	config := make(Config)
-	config.Load()
-	return &repository{repoURL, config}
+	err = config.Load()
+	if err != nil {
+		return
+	}
+	repo = &repository{repoURL, config}
+	return
 }
 
 func (repo *repository) PullrequestUrlWithNumber(num int) (pullrequestURL string) {

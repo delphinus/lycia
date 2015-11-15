@@ -156,7 +156,12 @@ func doPullrequest(c *cli.Context) {
 		os.Exit(1)
 	}
 
-	repo := github.Repository(remoteURL.ToURL())
+	repo, err := github.Repository(remoteURL.ToURL())
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "cannot detect repository: %s", err)
+		os.Exit(1)
+	}
 
 	if argNumber > 0 || top {
 		urlString := repo.PullrequestUrlWithNumber(argNumber)
