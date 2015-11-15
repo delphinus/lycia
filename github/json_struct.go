@@ -84,5 +84,6 @@ type App struct {
 
 type SiteConfig struct {
 	Host        string `json:"host"`
+	ApiRoot     string `json:"api_root"`
 	AccessToken string `json:"access_token"`
 }
