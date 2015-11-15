@@ -7,9 +7,9 @@ import (
 )
 
 var repoURL, _ = url.Parse("https://github.com/delphinus35/lycia")
-var repo = Repository(repoURL)
+var repo, _ = Repository(repoURL)
 var hogeURL, _ = url.Parse("https://example.com/hogehoge")
-var hogeRepo = Repository(hogeURL)
+var hogeRepo, _ = Repository(hogeURL)
 
 func TestPullrequestUrlWithNumber(t *testing.T) {
 	expected := repoURL.String() + "/pulls"
