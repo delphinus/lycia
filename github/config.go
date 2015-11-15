@@ -33,7 +33,7 @@ func (c Config) Load() (err error) {
 	var rawConfig []SiteConfig
 	err = json.Unmarshal(byt, &rawConfig)
 	if err != nil {
-		err = LyciaError(fmt.Sprintf("config path '%s' is corrupted"))
+		err = LyciaError(fmt.Sprintf("config path '%s' is corrupted: %s", ConfigPath, err))
 		return
 	}
 
