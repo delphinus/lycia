@@ -47,7 +47,6 @@ func (repo *repository) PullrequestUrlWithBranch(branch string, force bool) (prU
 	if !force {
 		prURL, err = repo.GetPrUrlFromCache(branch)
 		if err == nil {
-			fmt.Println("using cache...")
 			return
 		}
 	}
