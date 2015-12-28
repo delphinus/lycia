@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 type repository struct {
@@ -108,7 +109,7 @@ func (repo *repository) NewAccessToken(host string, apiRoot string) (accessToken
 		return
 	}
 
-	reqBody := `{"scopes":["repo"],"note":"lycia"}`
+	reqBody := fmt.Sprintf(`{"scopes":["repo"],"note":"lycia %s"}`, time.Now())
 	req, err := repo.NewPostRequest(username, password, apiRoot+"/authorizations", reqBody)
 	if err != nil {
 		return
@@ -143,7 +144,7 @@ func (repo *repository) NewAccessToken(host string, apiRoot string) (accessToken
 			return
 		}
 
-	} else if res.StatusCode != 200 {
+	} else if res.StatusCode != 200 && res.StatusCode != 201 {
 		err = LyciaError(fmt.Sprintf("Unknown status: %s", res.Status))
 		return
 	}
@@ -157,8 +158,11 @@ func (repo *repository) NewAccessToken(host string, apiRoot string) (accessToken
 		return
 	}
 
-	accessToken = authorizations.HashedToken
-	if accessToken == "" {
+	if authorizations.HashedToken != "" {
+		accessToken = authorizations.HashedToken
+	} else if authorizations.Token != "" {
+		accessToken = authorizations.Token
+	} else {
 		err = LyciaError("cannot detect HashedToken")
 	}
 	return
@@ -203,7 +207,7 @@ func (repo *repository) DetectApiRootAndSetAccessToken(values url.Values) (apiRo
 }
 
 func (repo *repository) NewPostRequest(username string, password string, urlStr string, body string) (req *http.Request, err error) {
-	req, err = http.NewRequest("POST", urlStr, bytes.NewBufferString(body))
+	req, err = http.NewRequest("POST", urlStr, bytes.NewBuffer([]byte(body)))
 	req.SetBasicAuth(username, password)
 	return
 }
