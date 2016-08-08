@@ -17,7 +17,7 @@ type Setting struct {
 }
 
 func (setting Setting) sshArgs(cmd string) (result []string) {
-	append(result,
+	result = append(result,
 		"-p", setting.port,
 		"-l", setting.user,
 		setting.copyArgs,
@@ -41,6 +41,7 @@ func Command(name string, args ...string) (cmd *exec.Cmd, err error) {
 		args = fsshEnv.sshArgs(commandToExecute)
 	}
 	cmd = exec.Command(name, args...)
+	return
 }
 
 func fetchFsshEnv() (result Setting, err error) {
