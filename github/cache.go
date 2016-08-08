@@ -3,7 +3,7 @@ package github
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/delphinus35/lycia/error"
+	"github.com/delphinus35/lycia/util"
 	"io/ioutil"
 	"os"
 )
@@ -27,14 +27,14 @@ func (c Cache) LoadCache() (err error) {
 
 	byt, err := ioutil.ReadFile(CachePath)
 	if err != nil {
-		err = error.LyciaError(fmt.Sprintf("access error to cache path '%s': %s", CachePath, err))
+		err = util.LyciaError(fmt.Sprintf("access error to cache path '%s': %s", CachePath, err))
 		return
 	}
 
 	var rawCache []PrUrlCache
 	err = json.Unmarshal(byt, &rawCache)
 	if err != nil {
-		err = error.LyciaError(fmt.Sprintf("cache path '%s' is corrupted: %s", CachePath, err))
+		err = util.LyciaError(fmt.Sprintf("cache path '%s' is corrupted: %s", CachePath, err))
 		return
 	}
 
@@ -67,13 +67,13 @@ func (c Cache) SaveCache() (err error) {
 
 	byt, err := json.Marshal(rawCache)
 	if err != nil {
-		err = error.LyciaError(fmt.Sprintf("cannot encode cache to JSON: %s", err))
+		err = util.LyciaError(fmt.Sprintf("cannot encode cache to JSON: %s", err))
 		return
 	}
 
 	err = ioutil.WriteFile(CachePath, byt, 0644)
 	if err != nil {
-		err = error.LyciaError(fmt.Sprintf("cannot write cache to file '%s': %s", CachePath, err))
+		err = util.LyciaError(fmt.Sprintf("cannot write cache to file '%s': %s", CachePath, err))
 	}
 
 	return

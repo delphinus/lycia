@@ -3,7 +3,7 @@ package github
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/delphinus35/lycia/error"
+	"github.com/delphinus35/lycia/util"
 	"io/ioutil"
 	"os"
 )
@@ -26,14 +26,14 @@ func (c Config) Load() (err error) {
 
 	byt, err := ioutil.ReadFile(ConfigPath)
 	if err != nil {
-		err = error.LyciaError(fmt.Sprintf("access error to config path '%s': %s", ConfigPath, err))
+		err = util.LyciaError(fmt.Sprintf("access error to config path '%s': %s", ConfigPath, err))
 		return
 	}
 
 	var rawConfig []SiteConfig
 	err = json.Unmarshal(byt, &rawConfig)
 	if err != nil {
-		err = error.LyciaError(fmt.Sprintf("config path '%s' is corrupted: %s", ConfigPath, err))
+		err = util.LyciaError(fmt.Sprintf("config path '%s' is corrupted: %s", ConfigPath, err))
 		return
 	}
 
@@ -57,13 +57,13 @@ func (c Config) Save() (err error) {
 
 	byt, err := json.Marshal(rawConfig)
 	if err != nil {
-		err = error.LyciaError(fmt.Sprintf("cannot encode config to JSON: %s", err))
+		err = util.LyciaError(fmt.Sprintf("cannot encode config to JSON: %s", err))
 		return
 	}
 
 	err = ioutil.WriteFile(ConfigPath, byt, 0644)
 	if err != nil {
-		err = error.LyciaError(fmt.Sprintf("cannot write config to file '%s': %s", ConfigPath, err))
+		err = util.LyciaError(fmt.Sprintf("cannot write config to file '%s': %s", ConfigPath, err))
 	}
 	return
 }

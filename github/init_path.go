@@ -2,7 +2,7 @@ package github
 
 import (
 	"fmt"
-	"github.com/delphinus35/lycia/error"
+	"github.com/delphinus35/lycia/util"
 	"os"
 	"path"
 )
@@ -13,7 +13,7 @@ func InitPath(pathStr string) (err error) {
 	if err != nil || !stat.IsDir() {
 		err = os.MkdirAll(dir, 0755)
 		if err != nil {
-			err = error.LyciaError(fmt.Sprintf("cannot mkdir: '%s'", dir))
+			err = util.LyciaError(fmt.Sprintf("cannot mkdir: '%s'", dir))
 			return
 		}
 	}

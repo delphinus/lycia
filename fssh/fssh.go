@@ -2,7 +2,7 @@ package fssh
 
 import (
 	"bufio"
-	"github.com/delphinus35/lycia/error"
+	"github.com/delphinus35/lycia/util"
 	"os"
 	"os/exec"
 	"strings"
@@ -32,7 +32,7 @@ func (setting Setting) sshArgs(cmd string) (result []string) {
 func Command(name string, args ...string) (cmd *exec.Cmd, err error) {
 	empty := Setting{}
 	if fsshEnv, err := fetchFsshEnv(); err != nil {
-		err = error.LyciaError(err)
+		err = util.LyciaError(err)
 		return
 	} else if fsshEnv != empty {
 		commandToExecute := strings.Join(append([]string{name}, args...), " ")
@@ -60,13 +60,13 @@ func parseTmuxEnv() (setting Setting, err error) {
 	showenvCommand := exec.Command("tmux", "showenv")
 	stdout, err = showenvCommand.StdoutPipe()
 	if err != nil {
-		err = error.LyciaError(err)
+		err = util.LyciaError(err)
 		return
 	}
 
 	err = showenvCommand.Start()
 	if err != nil {
-		err = error.LyciaError(err)
+		err = util.LyciaError(err)
 		return
 	}
 
@@ -97,7 +97,7 @@ func parseTmuxEnv() (setting Setting, err error) {
 
 	err = showenvCommand.Wait()
 	if err != nil {
-		err = error.LyciaError(err)
+		err = util.LyciaError(err)
 		return
 	}
 
