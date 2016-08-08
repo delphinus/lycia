@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/delphinus35/lycia/error"
+	"github.com/delphinus35/lycia/error"
 	"os/exec"
 	"regexp"
 )
@@ -14,11 +14,11 @@ func DetectCurrentBranch(dir string) (branch string) {
 	out, err := cmd.Output()
 
 	if err != nil {
-		err = LyciaError("can not exec 'git branch'")
+		err = error.LyciaError("can not exec 'git branch'")
 		return
 	}
 	if !branchPattern.Match(out) {
-		err = LyciaError("can not detect branch")
+		err = error.LyciaError("can not detect branch")
 		return
 	}
 	branch = string(branchPattern.FindSubmatch(out)[1])
