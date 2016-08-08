@@ -31,8 +31,9 @@ func (setting Setting) sshArgs(cmd string) (result []string) {
 // Command is to execute any commands with FSSH
 func Command(name string, args ...string) (cmd *exec.Cmd, err error) {
 	empty := Setting{}
-	if fsshEnv, err := fetchFsshEnv(); err != nil {
-		err = util.LyciaError(err)
+	var fsshEnv Setting
+	if fsshEnv, err = fetchFsshEnv(); err != nil {
+		err = util.LyciaError(err.Error())
 		return
 	} else if fsshEnv != empty {
 		commandToExecute := strings.Join(append([]string{name}, args...), " ")
@@ -58,15 +59,15 @@ func fetchFsshEnv() (result Setting, err error) {
 
 func parseTmuxEnv() (setting Setting, err error) {
 	showenvCommand := exec.Command("tmux", "showenv")
-	stdout, err = showenvCommand.StdoutPipe()
+	stdout, err := showenvCommand.StdoutPipe()
 	if err != nil {
-		err = util.LyciaError(err)
+		err = util.LyciaError(err.Error())
 		return
 	}
 
 	err = showenvCommand.Start()
 	if err != nil {
-		err = util.LyciaError(err)
+		err = util.LyciaError(err.Error())
 		return
 	}
 
@@ -97,7 +98,7 @@ func parseTmuxEnv() (setting Setting, err error) {
 
 	err = showenvCommand.Wait()
 	if err != nil {
-		err = util.LyciaError(err)
+		err = util.LyciaError(err.Error())
 		return
 	}
 

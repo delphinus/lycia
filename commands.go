@@ -17,6 +17,7 @@ func openOrPrintURL(c *cli.Context, urlString string, doPrint bool) {
 		fmt.Printf("opening url: \"%s\"...\n", urlString)
 		noFssh := c.Bool("no-fssh")
 		var cmd *exec.Cmd
+		var err error
 		if noFssh {
 			cmd = exec.Command("open", urlString)
 		} else {
