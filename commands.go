@@ -20,7 +20,11 @@ func openOrPrintURL(c *cli.Context, urlString string, doPrint bool) {
 		if noFssh {
 			cmd = exec.Command("open", urlString)
 		} else {
-			cmd = fssh.Command("open", urlString)
+			cmd, err = fssh.Command("open", urlString)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "fssh command not found: %s\n", err)
+				os.Exit(1)
+			}
 		}
 		cmd.Run()
 	}
