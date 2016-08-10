@@ -2,7 +2,6 @@ package fssh
 
 import (
 	"bufio"
-	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -95,11 +94,7 @@ func parseTmuxEnv() (setting Setting, err error) {
 		if len(keyAndValue) != 2 {
 			return
 		}
-		keyNameIndex := strings.Index(keyAndValue[0], prefix)
-		if keyNameIndex == -1 {
-			return
-		}
-		switch keyAndValue[0][keyNameIndex:] {
+		switch keyAndValue[0][len(prefix):] {
 		case "PORT":
 			port = keyAndValue[1]
 		case "USER":
