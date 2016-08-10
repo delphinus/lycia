@@ -30,6 +30,7 @@ func openOrPrintURL(c *cli.Context, urlString string, doPrint bool) (err error) 
 	return
 }
 
+// Commands define subcommands
 var Commands = []cli.Command{
 	commandOpen,
 	commandIssue,
