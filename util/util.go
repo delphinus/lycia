@@ -1,4 +1,4 @@
-package error
+package util
 
 type LyciaError string
 

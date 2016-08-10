@@ -1,0 +1,8 @@
+gom 'github.com/codegangsta/cli'
+gom 'github.com/fatih/color'
+gom 'golang.org/x/crypto/ssh/terminal'
+gom 'gopkg.in/guregu/null.v3'
+
+group :test do
+	gom 'github.com/MakeNowJust/heredoc'
+end

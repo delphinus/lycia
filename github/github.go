@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	. "github.com/delphinus35/lycia/ask"
-	. "github.com/delphinus35/lycia/error"
+	"github.com/delphinus35/lycia/ask"
+	"github.com/delphinus35/lycia/util"
 	"net/http"
 	"net/url"
 	"strings"
@@ -59,14 +59,14 @@ func (repo *repository) PullrequestUrlWithBranch(branch string, force bool) (prU
 
 	apiRoot, err := repo.DetectApiRootAndSetAccessToken(values)
 	if err != nil {
-		err = LyciaError("cannot detect ApiRoot: " + err.Error())
+		err = util.LyciaError("cannot detect ApiRoot: " + err.Error())
 		return
 	}
 
 	searchURL := fmt.Sprintf("%s/search/issues?%s", apiRoot, values.Encode())
 	res, err := http.Get(searchURL)
 	if err != nil {
-		err = LyciaError("failed to fetch: " + searchURL)
+		err = util.LyciaError("failed to fetch: " + searchURL)
 		return
 	}
 
@@ -81,30 +81,30 @@ func (repo *repository) PullrequestUrlWithBranch(branch string, force bool) (prU
 
 	items := searchIssues.Items
 	if len(items) == 0 {
-		err = LyciaError(fmt.Sprintf("pullrequest not found for the branch: %s", branch))
+		err = util.LyciaError(fmt.Sprintf("pullrequest not found for the branch: %s", branch))
 		return
 	}
 
 	prURL, err = url.Parse(items[0].HtmlUrl)
 	if err != nil {
-		err = LyciaError(fmt.Sprintf("html_url is invalid: %s", items[0].HtmlUrl))
+		err = util.LyciaError(fmt.Sprintf("html_url is invalid: %s", items[0].HtmlUrl))
 		return
 	}
 
 	err = repo.SavePrUrlToCache(branch, prURL)
 	if err != nil {
-		err = LyciaError(fmt.Sprintf("cache cannot be saved: %s", err))
+		err = util.LyciaError(fmt.Sprintf("cache cannot be saved: %s", err))
 	}
 
 	return
 }
 
 func (repo *repository) NewAccessToken(host string, apiRoot string) (accessToken string, err error) {
-	username, err := Ask(fmt.Sprintf("Please input username for '%s':", host), false)
+	username, err := ask.Ask(fmt.Sprintf("Please input username for '%s':", host), false)
 	if err != nil {
 		return
 	}
-	password, err := Ask(fmt.Sprintf("Please input password for '%s':", host), true)
+	password, err := ask.Ask(fmt.Sprintf("Please input password for '%s':", host), true)
 	if err != nil {
 		return
 	}
@@ -124,7 +124,7 @@ func (repo *repository) NewAccessToken(host string, apiRoot string) (accessToken
 	if res.StatusCode == 401 {
 		if v := res.Header.Get("X-Github-Otp"); strings.HasPrefix(v, "required;") {
 			var otp string
-			otp, err = Ask("Please input two-factor authentication code:", false)
+			otp, err = ask.Ask("Please input two-factor authentication code:", false)
 			if err != nil {
 				return
 			}
@@ -140,12 +140,12 @@ func (repo *repository) NewAccessToken(host string, apiRoot string) (accessToken
 			}
 
 		} else {
-			err = LyciaError("Bad credentials")
+			err = util.LyciaError("Bad credentials")
 			return
 		}
 
 	} else if res.StatusCode != 200 && res.StatusCode != 201 {
-		err = LyciaError(fmt.Sprintf("Unknown status: %s", res.Status))
+		err = util.LyciaError(fmt.Sprintf("Unknown status: %s", res.Status))
 		return
 	}
 
@@ -163,7 +163,7 @@ func (repo *repository) NewAccessToken(host string, apiRoot string) (accessToken
 	} else if authorizations.Token != "" {
 		accessToken = authorizations.Token
 	} else {
-		err = LyciaError("cannot detect HashedToken")
+		err = util.LyciaError("cannot detect HashedToken")
 	}
 	return
 }
@@ -183,7 +183,7 @@ func (repo *repository) DetectApiRootAndSetAccessToken(values url.Values) (apiRo
 	sc := SiteConfig{repo.URL.Host, "", ""}
 
 	msg := fmt.Sprintf("Please input github API root path for '%s' (such as 'https://api.github.com') :", repo.URL.Host)
-	apiRoot, err = Ask(msg, false)
+	apiRoot, err = ask.Ask(msg, false)
 	if err != nil {
 		return
 	}
@@ -191,14 +191,14 @@ func (repo *repository) DetectApiRootAndSetAccessToken(values url.Values) (apiRo
 
 	sc.AccessToken, err = repo.NewAccessToken(sc.Host, sc.ApiRoot)
 	if err != nil {
-		err = LyciaError("failed to generate new access token: " + err.Error())
+		err = util.LyciaError("failed to generate new access token: " + err.Error())
 		return
 	}
 
 	repo.Config[repo.URL.Host] = sc
 	err = repo.Config.Save()
 	if err != nil {
-		err = LyciaError("failed to save config: " + err.Error())
+		err = util.LyciaError("failed to save config: " + err.Error())
 		return
 	}
 
@@ -215,13 +215,13 @@ func (repo *repository) NewPostRequest(username string, password string, urlStr 
 func (repo *repository) GetPrUrlFromCache(branch string) (prURL *url.URL, err error) {
 	branchToUrl, ok := repo.Cache[repo.URL.String()]
 	if !ok {
-		err = LyciaError("cache not found")
+		err = util.LyciaError("cache not found")
 		return
 	}
 	if prUrlStr, ok := branchToUrl[branch]; ok {
 		prURL, err = url.Parse(prUrlStr)
 	} else {
-		err = LyciaError("cache not found")
+		err = util.LyciaError("cache not found")
 	}
 	return
 }

@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func openOrPrintURL(c *cli.Context, urlString string, doPrint bool) {
+func openOrPrintURL(c *cli.Context, urlString string, doPrint bool) (err error) {
 	if doPrint {
 		fmt.Print(urlString)
 	} else {
@@ -20,12 +20,17 @@ func openOrPrintURL(c *cli.Context, urlString string, doPrint bool) {
 		if noFssh {
 			cmd = exec.Command("open", urlString)
 		} else {
-			cmd = fssh.Command("open", urlString)
+			cmd, err = fssh.Command("open", urlString)
+			if err != nil {
+				return
+			}
 		}
 		cmd.Run()
 	}
+	return
 }
 
+// Commands define subcommands
 var Commands = []cli.Command{
 	commandOpen,
 	commandIssue,
@@ -76,7 +81,7 @@ var openFlags = append(
 	},
 )
 
-func doOpen(c *cli.Context) {
+func doOpen(c *cli.Context) (err error) {
 	argPath := c.Args().Get(0)
 	root := c.String("root")
 	ref := c.String("ref")
@@ -86,12 +91,12 @@ func doOpen(c *cli.Context) {
 
 	remoteURL, err := RemoteURL(root)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
-		os.Exit(1)
-	} else {
-		urlString := remoteURL.SourceURL(ref, argPath, from, to)
-		openOrPrintURL(c, urlString, doPrint)
+		return
 	}
+
+	urlString := remoteURL.SourceURL(ref, argPath, from, to)
+	openOrPrintURL(c, urlString, doPrint)
+	return
 }
 
 var commandIssue = cli.Command{
@@ -106,7 +111,7 @@ var commandIssue = cli.Command{
 
 var issueFlags = commonFlags
 
-func doIssue(c *cli.Context) {
+func doIssue(c *cli.Context) (err error) {
 	argNumber, _ := strconv.Atoi(c.Args().Get(0))
 	root := c.String("root")
 	doPrint := c.Bool("print")
@@ -115,10 +120,11 @@ func doIssue(c *cli.Context) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
 		os.Exit(1)
-	} else {
-		urlString := remoteURL.IssueURL(argNumber)
-		openOrPrintURL(c, urlString, doPrint)
 	}
+
+	urlString := remoteURL.IssueURL(argNumber)
+	openOrPrintURL(c, urlString, doPrint)
+	return
 }
 
 var commandPullrequest = cli.Command{
@@ -147,7 +153,7 @@ var pullrequestFlags = append(commonFlags,
 	},
 )
 
-func doPullrequest(c *cli.Context) {
+func doPullrequest(c *cli.Context) (err error) {
 	argNumber, _ := strconv.Atoi(c.Args().Get(0))
 	root := c.String("root")
 	doPrint := c.Bool("print")
@@ -157,15 +163,12 @@ func doPullrequest(c *cli.Context) {
 
 	remoteURL, err := RemoteURL(root)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "remote url not found: %s\n", err)
-		os.Exit(1)
+		return
 	}
 
 	repo, err := github.Repository(remoteURL.ToURL())
-
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "cannot detect repository: %s", err)
-		os.Exit(1)
+		return
 	}
 
 	if argNumber > 0 || top {
@@ -180,9 +183,9 @@ func doPullrequest(c *cli.Context) {
 
 	prURL, err := repo.PullrequestUrlWithBranch(branch, force)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "pullrequest URL not found: %s\n", err)
-		os.Exit(1)
-	} else {
-		openOrPrintURL(c, prURL.String(), doPrint)
+		return
 	}
+
+	openOrPrintURL(c, prURL.String(), doPrint)
+	return
 }

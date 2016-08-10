@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	. "github.com/delphinus35/lycia/error"
+	"github.com/delphinus35/lycia/util"
 	"regexp"
 )
 
@@ -32,7 +32,7 @@ func UrlMaker(rawUrl string) (gitUrl GitUrl, err error) {
 
 func (gitUrl *GitUrl) Parse() (err error) {
 	if !urlPattern.MatchString(gitUrl.RawUrl) {
-		return LyciaError("this is not URL for git")
+		return util.LyciaError("this is not URL for git")
 	}
 	names := urlPattern.SubexpNames()[1:]
 	m := urlPattern.FindStringSubmatch(gitUrl.RawUrl)[1:]
