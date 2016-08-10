@@ -2,9 +2,9 @@
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-test: gom package-install-test test-only ## Run tests with installing `gom` & other dependencies
+test-all: gom package-install-test test ## Run tests with installing `gom` & other dependencies
 
-test-only: ## Run tests only
+test: ## Run tests only
 	gom test `go list ./... | grep -v vendor`
 
 build: gom package-install ## Build binary
