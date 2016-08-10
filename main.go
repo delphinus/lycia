@@ -5,7 +5,8 @@ import (
 	"os"
 )
 
-var Version = "v0.0.4"
+// Version is a version number
+var Version = "v0.0.5"
 
 func main() {
 	newApp().Run(os.Args)
