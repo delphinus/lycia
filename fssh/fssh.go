@@ -2,11 +2,25 @@ package fssh
 
 import (
 	"bufio"
-	"github.com/delphinus35/lycia/util"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/delphinus35/lycia/util"
 )
+
+var _os = struct {
+	Getenv func(string) string
+}{
+	os.Getenv,
+}
+
+var _exec = struct {
+	Command func(string, ...string) *exec.Cmd
+}{
+	exec.Command,
+}
 
 // Setting for FSSH
 type Setting struct {
@@ -40,26 +54,26 @@ func Command(name string, args ...string) (cmd *exec.Cmd, err error) {
 		name = "ssh"
 		args = fsshEnv.sshArgs(commandToExecute)
 	}
-	cmd = exec.Command(name, args...)
+	cmd = _exec.Command(name, args...)
 	return
 }
 
 func fetchFsshEnv() (result Setting, err error) {
-	if tmuxEnv := os.Getenv("TMUX"); len(tmuxEnv) > 0 {
+	if tmuxEnv := _os.Getenv("TMUX"); len(tmuxEnv) > 0 {
 		result, err = parseTmuxEnv()
 	} else {
 		result = Setting{
-			os.Getenv("LC_FSSH_PORT"),
-			os.Getenv("LC_FSSH_USER"),
-			os.Getenv("LC_FSSH_COPY_ARGS"),
-			os.Getenv("LC_FSSH_PATH"),
+			_os.Getenv("LC_FSSH_PORT"),
+			_os.Getenv("LC_FSSH_USER"),
+			_os.Getenv("LC_FSSH_COPY_ARGS"),
+			_os.Getenv("LC_FSSH_PATH"),
 		}
 	}
 	return
 }
 
 func parseTmuxEnv() (setting Setting, err error) {
-	showenvCommand := exec.Command("tmux", "showenv")
+	showenvCommand := _exec.Command("tmux", "showenv")
 	stdout, err := showenvCommand.StdoutPipe()
 	if err != nil {
 		err = util.LyciaError(err.Error())
