@@ -94,15 +94,22 @@ func parseTmuxEnv() (setting Setting, err error) {
 		if len(keyAndValue) != 2 {
 			return
 		}
-		switch keyAndValue[0][len(prefix):] {
+
+		key := keyAndValue[0]
+		value := keyAndValue[1]
+		if -1 == strings.Index(key, prefix) {
+			return
+		}
+
+		switch key[len(prefix):] {
 		case "PORT":
-			port = keyAndValue[1]
+			port = value
 		case "USER":
-			user = keyAndValue[1]
+			user = value
 		case "COPY_ARGS":
-			copyArgs = keyAndValue[1]
+			copyArgs = value
 		case "PATH":
-			path = keyAndValue[1]
+			path = value
 		}
 	}
 

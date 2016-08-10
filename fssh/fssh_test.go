@@ -29,7 +29,9 @@ func withFakeCommand(t *testing.T, envValues string, block func()) {
 
 func TestInvalidEnv(t *testing.T) {
 	withFakeCommand(t, `
-		SOME_INVALID_ENV=hoge
+		HOGE=hoge
+		FUGA
+		LC_FSSH_HOGE=hogehoge
 	`, func() {
 		setting, _ := parseTmuxEnv()
 		expected := Setting{}
