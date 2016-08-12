@@ -92,13 +92,13 @@ func parseTmuxEnv() (setting Setting, err error) {
 	for scanner.Scan() {
 		keyAndValue := strings.SplitN(scanner.Text(), sep, 2)
 		if len(keyAndValue) != 2 {
-			return
+			continue
 		}
 
 		key := keyAndValue[0]
 		value := keyAndValue[1]
 		if -1 == strings.Index(key, prefix) {
-			return
+			continue
 		}
 
 		switch key[len(prefix):] {
