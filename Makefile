@@ -45,7 +45,7 @@ else
 	@echo cross compile
 	gox -output '$(GOX_BINARY_PATH)' -os '$(GOX_OS)' -arch '$(GOX_ARCH)'
 	@echo archive each binary
-	for i in dist/*; do zip -j $${i%.*}.zip $$i; rm $$i; done
+	for i in dist/*; do j=$$(echo $$i | sed -e 's/_[^\.]*//'); mv $$i $$j; zip -j $${i%.*}.zip $$j; rm $$j; done
 	go get github.com/tcnksm/ghr
 	@echo Releasing binaries on tag: $(TRAVIS_TAG)
 	@ghr --username delphinus35 --token $(GITHUB_TOKEN) --replace --prerelease --debug $(TRAVIS_TAG) dist/
