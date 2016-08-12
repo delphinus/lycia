@@ -6,7 +6,7 @@ import (
 )
 
 // Version is a version number
-var Version = "v0.0.7"
+var Version = "v0.0.8"
 
 func main() {
 	newApp().Run(os.Args)
