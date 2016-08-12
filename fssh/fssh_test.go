@@ -43,17 +43,27 @@ func TestInvalidEnv(t *testing.T) {
 
 func TestValidEnv(t *testing.T) {
 	withFakeCommand(t, `
+		-DISPLAY
+		LC_FSSH_COPY=reattach-to-user-namespace pbcopy
+		LC_FSSH_COPY_ARGS=-o HostKeyAlias=hogehoge.local
+		LC_FSSH_PASTE=reattach-to-user-namespace pbpaste
+		LC_FSSH_PASTE_ARGS=-o HostKeyAlias=hogehoge.locall
+		LC_FSSH_PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 		LC_FSSH_PORT=3333
 		LC_FSSH_USER=delphinus
-		LC_FSSH_COPY_ARGS=hoge fuga=hogefuga
-		LC_FSSH_PATH=/tmp/test/test
+		-SSH_AGENT_PID
+		SSH_ASKPASS=/usr/libexec/openssh/gnome-ssh-askpass
+		SSH_AUTH_SOCK=/home/game/.ssh/auth_sock
+		SSH_CONNECTION=192.168.11.11 12345 192.168.11.22 22
+		-WINDOWID
+		-XAUTHORITY
 	`, func() {
 		setting, _ := parseTmuxEnv()
 		expected := Setting{
 			"3333",
 			"delphinus",
-			"hoge fuga=hogefuga",
-			"/tmp/test/test",
+			"-o HostKeyAlias=hogehoge.local",
+			"/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
 		}
 		if setting != expected {
 			t.Errorf(`get "%v" want "%v"`, setting, expected)
