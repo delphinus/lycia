@@ -1,3 +1,6 @@
+env:
+  global:
+    secure: "nSID6R4iCIsnTXrvHSeBHAJyAqsSBvECtrkBops/SVJ/jTAaQ+RF5ons0BmYfLgz3EKOZjgkBFMlZDZ9WVTb2ws+BxAnCSPersU5+RbGxYSyWJsi2lxzLGw5TFVMNRytRyTHMToPAtAF50TBqCM9f0ziW6+yfA+JhtWsPybBCIzP0TiKvfJGN0Y98TDNXF6an9hKlRkEm6NnC5aK+pOqSlLKXwhgUVQPYmSMlATjnUdFCQkUoRT/2qg04IbD65HPzPOBD69emMMChG9EOtEn1ojnqdDRgRuoitO7wE4VWufkSoA1T+0+elQ/EgDHbw90xIfkpIuMTrFF8bGPyKviTBX0bxnziMMjnsRie74MFdUleqbRwLJQKbViZyRSGvGl8f7kt8dEsntenzFD/wFEdBm/hTWHy9pAUFzti0dh1ZDS2rpZMAR8Nw8TWLVgBse35D8cyM4+IGrgO2CUQaD8943i0Y1MLOZg21hdyfbjRLm7fHdWCwaszRxTUqY/ot2sVPipr14sZaGZa2OOFJ/XyPHaWdFphUw67ptIFlOlaZ0ILBV2GeiMHFOzhLPA8vw21ymhzIt5VnnCc+3rlRRFVhqAgpAxKbx/sYQaC449mTqn7jqU1TvirC8fPrfjNuC3ZSzpOHtAg5pgPVSER0tnUmM7fFp/cjW17n0OU0AbrhY="
 language: go
 go:
   - tip
@@ -7,3 +10,4 @@ before_script:
   - export PATH=$HOME/gopath/bin:$PATH
 script:
   - make travis-test
+  - make travis-release
